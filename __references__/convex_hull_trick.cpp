@@ -5,6 +5,9 @@ struct line {
   long long a, b, get(long long x) {
     return a*x + b;
   }
+  long double getd(long double x) {
+    return x * a + b;
+  }
 };
 
 struct convex_hull_trick {

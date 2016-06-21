@@ -46,7 +46,8 @@ int inPolygon(point p, const vector< point >& vp) {
   int wn = 0, n = (int)vp.size() - 1;
   for(int i = 0; i<n; i++) {
     long long cs = cross(vp[i+1], vp[i], p);
-    if(cs == 0 && p.x <= max(vp[i].x, vp[i+1].x) && p.x >= min(vp[i].x, vp[i+1].x))
+    if(cs == 0 && p.x <= max(vp[i].x, vp[i+1].x) && p.x >= min(vp[i].x, vp[i+1].x)
+      && p.y <= max(vp[i].y, vp[i+1].y) && p.y >= min(vp[i].y, vp[i+1].y))
       return 1;
     if(vp[i].y <= p.y) {
       if(vp[i+1].y > p.y && cs > 0)
