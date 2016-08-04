@@ -7,7 +7,7 @@ const int N =2e5 + 5;
 int n, k;
 pair< int, int > ts[N], bb[N];
 int mi[N<<2], ans[N];
-bool used[N];
+pair< int, int > st[N];
 
 bool cmp(pair<int, int> a, pair< int, int> b) {
   if(a.first == b.first)
@@ -56,19 +56,13 @@ int main() {
     bb[i] = make_pair(b, i);
   }
   sort(bb, bb+k, cmp);
-  int cur = 0, cans = 0;;
-  stack<int> st;
+  int cur = 0, cans = 0, ncur = 1;
+  st[0] = {0, -1};
   for(int i = 0; i<k; i++) {
+    ncur = upper_bound(st, st+ncur, make_pair(bb[i].first, n+1)) - st;
+    int id = st[ncur-1].second;
+    cur = st[ncur-1].first;
     int now = bb[i].first-cur;
-    while(now < 0) {
-      assert(!st.empty());
-      now += ts[st.top()].second;
-      cur -= ts[st.top()].second;
-      cans--;
-      used[st.top()] = false;
-      st.pop();
-    }
-    int id = st.empty() ? -1 : st.top();
     // cerr << id << " " << now<<  endl;
     while(true) {
       id = get(id+1, now);
@@ -76,14 +70,12 @@ int main() {
       if(id < n) {
         now -= ts[id].second;
         cur += ts[id].second;
-        cans++;
-        used[id] = true;
-        st.push(id);
+        st[ncur++] = {cur, id};
       }
       else break;
     }
     // cerr << bb[i].second << " " << cans << " " << cur << endl;
-    ans[bb[i].second] = cans;
+    ans[bb[i].second] = ncur-1;
   }
   for(int i = 0; i<k; i++)
     printf("%d ", ans[i]);
