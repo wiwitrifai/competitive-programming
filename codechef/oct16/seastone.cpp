@@ -4,7 +4,8 @@ using namespace std;
 
 const int N = 78787;
 
-int a[N], sum[N];
+int a[N];
+long long sum[N];
 vector< int > fac[N];
 
 int main() {
@@ -29,7 +30,7 @@ int main() {
     for (int i = 0; i < n; i++) {
       sum[i+1] = sum[i] + a[i];
     }
-    int ans = sum[n-1];
+    long long ans = sum[n-1];
     while (m > 0) {
       for (int i = 1; i <= n; i++) {
         int now = m;
@@ -51,7 +52,7 @@ int main() {
       }
       m -= n;
     }
-    printf("%d\n", ans);
+    printf("%lld\n", ans);
   }
   return 0;
 }
