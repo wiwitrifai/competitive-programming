@@ -16,7 +16,6 @@ int solve1(int k, int now) {
       now += i;
     else
       now -= i;
-    // vis[now] = 1;
     last = max(last, now);
     swap(a, b);
   }
@@ -35,10 +34,11 @@ int solve2(int k, int now) {
       now += i;
     else
       now -= i;
-    // vis[now] = 1;
     last = max(last, now);
     swap(a, b);
   }
+  assert(b == '+');
+  return now;
 }
 
 
@@ -74,8 +74,3 @@ int main() {
   }
   return 0;
 }
-
-// 0 4 1 3 2 6 7 5 8 
-// 5
-// 0 5 1 4 2 3 8 7 9 6 10 
-// 0 6 1 5 2 4 

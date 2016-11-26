@@ -6,7 +6,8 @@ const int N = 5e4 + 5, B = pow(N, 2.0 / 3.0);
 
 int n;
 vector< int > adj[N];
-int a[N], l[N], r[N], val[N], cnt[N], cntr, ans[N];
+int a[N], l[N], r[N], val[N], cnt[N], cntr;
+long long ans[N];
 vector< pair<int, pair<int, int >> > query;
 
 bool cek(pair<int, pair<int, int > > le, pair<int, pair<int,int> > ri) {
@@ -47,7 +48,7 @@ void change(int z, int vv) {
   int id = l[z];
   if (vv == a[id])
     return;
-  if (le <= z && z <= ri) {
+  if (le <= id && id <= ri) {
     add(vv);
     del(a[id]);
   }
@@ -66,6 +67,7 @@ int main() {
   }
   cntr = 0;
   dfs(0);
+  assert(cntr == n);
   int q;
   scanf("%d", &q);
   for (int i = 0; i < q; i++) {
