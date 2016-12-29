@@ -1,0 +1,70 @@
+PROBLEM STATEMENT
+In a tree, the distance d(u,v) between vertices u and v is the smallest number of edges you need to traverse in order to get from u to v.
+
+
+The eccentricity of a vertex u is the maximum of all d(u,v). In other words, the eccentricity of u is the distance between u and the vertex that is the farthest away from u.
+
+
+You are given a vector <int> d with n elements.
+Construct any tree with the following properties:
+
+The tree has n vertices, numbered 0 through n-1.
+For each i, the eccentricity of vertex i is exactly d[i].
+
+
+If there is no such tree, return an empty vector <int>.
+If there are multiple such trees, you may output any of them.
+If your tree contains the edges a[0] - b[0], a[1] - b[1], ..., a[n-2] - b[n-2], return the following vector <int>:
+{a[0], b[0], a[1], b[1], ..., a[n-2], b[n-2]}.
+Note that the return value should contain exactly 2*(n-1) elements.
+
+DEFINITION
+Class:TreeDistanceConstruction
+Method:construct
+Parameters:vector <int>
+Returns:vector <int>
+Method signature:vector <int> construct(vector <int> d)
+
+
+CONSTRAINTS
+-d will contain between 2 and 50 elements, inclusive.
+-Each element in d will be between 1 and |d|-1, inclusive.
+
+
+EXAMPLES
+
+0)
+{3,2,2,3}
+
+Returns: {1, 2, 1, 0, 2, 3 }
+
+The return value shown in this example describes the chain 0 - 1 - 2 - 3.
+This is one of multiple correct trees for this test case.
+
+1)
+{1,2,2,2}
+
+Returns: {0, 1, 0, 2, 0, 3 }
+
+In this case the only correct tree is a star with vertex 0 in the middle.
+
+2)
+{1,1,1,1}
+
+Returns: { }
+
+
+
+3)
+{1,1,1}
+
+Returns: { }
+
+
+
+4)
+{1,1}
+
+Returns: {0, 1 }
+
+

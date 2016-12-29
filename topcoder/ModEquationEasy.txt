@@ -1,0 +1,85 @@
+PROBLEM STATEMENT
+You are given the ints n, K, and v.
+
+
+Consider the following modular equation with n variables: (x[0] * x[1] * x[2] * ... * x[n-1]) mod K = v.
+How many solutions does it have?
+
+
+Formally, we want to find the number of sequences (x[0], x[1], ..., x[n-1]) such that each x[i] is an integer between 0 and K-1, inclusive, and the product of all x[i] gives the remainder v when divided by K.
+
+
+Please compute and return the number of such sequences, modulo 10^9+7.
+
+DEFINITION
+Class:ModEquationEasy
+Method:count
+Parameters:int, int, int
+Returns:int
+Method signature:int count(int n, int K, int v)
+
+
+CONSTRAINTS
+-n will be between 1 and 1,000,000,000, inclusive.
+-K will be between 2 and 100, inclusive.
+-v will be between 0 and (K-1), inclusive.
+
+
+EXAMPLES
+
+0)
+2
+4
+1
+
+Returns: 2
+
+The input describes the modular equation (x[0] * x[1]) mod 4 = 1.
+
+
+There are two solutions: (1, 1) and (3, 3).
+
+1)
+2
+4
+0
+
+Returns: 8
+
+This time we have 8 solutions: (0, 0), (0, 1), (0, 2), (0, 3), (1, 0), (2, 0), (3, 0) and (2, 2).
+
+2)
+2
+4
+2
+
+Returns: 4
+
+
+
+3)
+3
+7
+5
+
+Returns: 36
+
+
+
+4)
+10
+100
+50
+
+Returns: 683036071
+
+
+
+5)
+1
+2
+0
+
+Returns: 1
+
+
