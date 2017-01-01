@@ -1,0 +1,102 @@
+PROBLEM STATEMENT
+The currency system in the Exponential Kingdom consists of various types of coins. The coin denominations follow these simple rules:
+
+Each denomination is a positive integer.
+There is a coin type with denomination 1.
+For each pair of different coin types, the denomination of one coin type divides the denomination of the other one.
+
+You are given a vector<long long> values containing all the available denominations in ascending order. You are also given a long long coins_sum. You want to pick a set of coins such that the sum of their values is exactly equal to coins_sum. Your method must count the number of ways in which such a set can be chosen. Since the answer may be very big, return it modulo 1,000,003 (10^6 + 3).
+
+DEFINITION
+Class:P8XCoinChange
+Method:solve
+Parameters:long long, vector<long long>
+Returns:int
+Method signature:int solve(long long coins_sum, vector<long long> values)
+
+
+NOTES
+-Let A and B be two sets of coins. They are considered different if and only if there exists a denomination X such that the numbers of coins worth X in A and in B differ.
+
+
+CONSTRAINTS
+-coins_sum will be between 1 and 10^18, inclusive.
+-values will contain between 1 and 40 elements, inclusive.
+-Each element of values will be between 1 and 10^18, inclusive.
+-values will be sorted in strictly ascending order. Note that this also implies that all the elements of values will be distinct.
+-For each pair of different elements in values, the smaller one will be a divisor of the larger one.
+-values[0] will be 1.
+
+
+EXAMPLES
+
+0)
+4
+{1, 3}
+
+Returns: 2
+
+The two sets of coins with sum 4 are:
+{1, 1, 1, 1}
+{1, 3}
+
+1)
+4
+{1, 2, 4}
+
+Returns: 4
+
+The only possible set of coins that sums to 4 are:
+{1, 1, 1, 1}
+{1, 1, 2}
+{2, 2}
+{4}
+
+2)
+3
+{1, 5}
+
+Returns: 1
+
+
+
+3)
+11
+{1, 2, 6}
+
+Returns: 9
+
+
+
+4)
+1000000000000000000
+{1, 1000000000, 1000000000000000000}
+
+Returns: 997005
+
+There are exactly 1,000,000,002 possible sets, hence you should return 1,000,000,002 modulo 1,000,003 which is equal to 997,005.
+
+5)
+961320341778342848
+{1,2,10,30,150,300,1200,2400,4800,14400,
+28800,57600,288000,576000,2304000,9216000,
+18432000,73728000,221184000,663552000,
+1327104000,5308416000,31850496000,
+95551488000,191102976000,764411904000,
+1528823808000,6115295232000,18345885696000,
+36691771392000,73383542784000,220150628352000,
+440301256704000,1320903770112000,3962711310336000,
+15850845241344000,31701690482688000,95105071448064000,
+475525357240320000,951050714480640000}
+
+Returns: 245264
+
+
+
+6)
+1000000000000000000
+{1, 2}
+
+Returns: 499989
+
+
