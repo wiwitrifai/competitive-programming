@@ -1,0 +1,68 @@
+PROBLEM STATEMENT
+You may have solved the following classic task before:
+
+
+
+Given is a rectangular board divided into n rows by m columns of cells.
+Each cell is either empty or it contains an obstacle.
+You start in the cell (0, 0).
+In each step you can move to an adjacent cell (up, down, left, or right).
+Obviously, you may not leave the board and you may not enter a cell with an obstacle.
+You want to reach the cell (n-1, m-1).
+What is the smallest number of steps you need?
+
+
+
+In this task, you are going to solve the above task in reverse.
+You are given an int k.
+Design any rectangular board with the following properties:
+
+
+
+The number of rows (n) must be between 1 and 50, inclusive.
+The number of columns (m) must be between 1 and 50, inclusive.
+The corner cells (0, 0) and (n-1, m-1) must both be empty.
+It must be possible to reach the cell (n-1, m-1) from the cell (0, 0). Additionally, the shortest way of doing so must have exactly k steps.
+
+
+For the constraints used in this task a solution always exists.
+If there are multiple solutions, you may choose any of them.
+Return the board you constructed as a vector <string> with n elements, each containing m characters.
+Use the character '#' to represent an obstacle and the character '.' to represent an empty cell.
+
+DEFINITION
+Class:MazeConstruct
+Method:construct
+Parameters:int
+Returns:vector <string>
+Method signature:vector <string> construct(int k)
+
+
+CONSTRAINTS
+-k will be between 2 and 1,000, inclusive.
+
+
+EXAMPLES
+
+0)
+3
+
+Returns: {"...." }
+
+There is more than one solution.
+Any valid solution will be accepted.
+For example, you may also return {"..", "..", ".."} or {"..", ".#", ".."}.
+
+1)
+4
+
+Returns: {"...", "...", "..." }
+
+
+
+2)
+10
+
+Returns: {"..#..", "#.#..", "..#..", ".#...", "....." }
+
+

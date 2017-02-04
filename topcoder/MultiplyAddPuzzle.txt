@@ -1,0 +1,88 @@
+PROBLEM STATEMENT
+You have the number s.
+You may change this number.
+In each step you can apply one of two possible changes:
+
+
+
+Add a to your current number.
+Multiply your current number by b.
+
+Your goal is to change s into t using the minimal number of steps.
+
+
+You are given the long longs s, t, a, and b.
+Compute and return the smallest number of steps in which we can turn s into t, or -1 if changing s into t is not possible.
+
+DEFINITION
+Class:MultiplyAddPuzzle
+Method:minimalSteps
+Parameters:long long, long long, long long, long long
+Returns:long long
+Method signature:long long minimalSteps(long long s, long long t, long long a, long long b)
+
+
+CONSTRAINTS
+-s will be between 0 and 1,000,000,000,000,000,000 (10^18), inclusive.
+-t will be between 0 and 1,000,000,000,000,000,000 (10^18), inclusive.
+-a will be between 0 and 1,000,000,000,000,000,000 (10^18), inclusive.
+-b will be between 0 and 1,000,000,000,000,000,000 (10^18), inclusive.
+
+
+EXAMPLES
+
+0)
+10
+40
+4
+2
+
+Returns: 2
+
+At the beginning you have the number 10.
+In each step you can either add 4 to your number, or you can multiply it by 2.
+You want to reach the number 40.
+The optimal solution is to use multiplication twice, changing 10 to 10*2 = 20 and then changing 20 to 20*2 = 40.
+
+1)
+10
+28
+4
+2
+
+Returns: 2
+
+The same setting, but now the goal is the number t = 28.
+Again, it is possible to reach this number in two steps.
+In the first step we add 4, going from 10 to 10+4 = 14.
+In the second step we multiply by 2, going from 14 to 14*2 = 28.
+
+2)
+10
+99
+4
+2
+
+Returns: -1
+
+Whatever you do, the number you'll have will always be even, so it's impossible to reach the odd number 99.
+
+3)
+345
+12345
+1
+10
+
+Returns: 895
+
+
+
+4)
+1000000000000000000
+1000000000000000000
+1000000000000000000
+1000000000000000000
+
+Returns: 0
+
+
