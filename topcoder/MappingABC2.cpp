@@ -2,100 +2,60 @@
 
 using namespace std;
 
-const int mod = 1e9 + 7, N = 3030;
+const int mod = 1e9 + 7;
 
-long long powmod(long long b, long long p) {
-	long long ret = 1;
-	while (p) {
-		if (p & 1)
-			ret =(ret * b) % mod;
-		b = (b * b) % mod;
-		p >>= 1;
-	}
-	return ret;
-}
-int last[N], cnt[N];
-bool bf[N], bl[N];
-int mark[10];
-int val[N], tmp[N];
-int add[] = {0, 2, 3, 2, 2, 1, 2, 1};
-int sub[] = {0, 2, 2, 1, 2, 1, 1, 1};
-long long pos, neg;
-void reset() {
-	pos = neg = 1;
-	memset(mark, 0, sizeof mark);
-}
-long long mul(int mask) {
-	mark[mask]++;
-	pos = (pos * add[mask]) % mod;
-	neg = (neg * sub[mask]) % mod;
-}
-long long rem(int mask) {
-	mark[mask]--;
-	assert(mark[mask] >= 0);
-	pos = (pos * powmod(add[mask], mod-2)) % mod;
-	neg = (neg * powmod(sub[mask], mod-2)) % mod;
-}
-long long get() {
-	long long ret = pos;
-	if (!mark[7]) {
-		ret += mod - neg;
-		if (ret >= mod) ret -= mod;
-	}
-	return ret;
-}
+int val[55];
+bool fir[55], ok[55];
 
-class MappingABC {
+class MappingABC2 {
 public:
 	int countStrings(vector <int> t) {
 		int n = t.size();
-		memset(last, -1, sizeof last);
-		memset(cnt, 0, sizeof cnt);
+		memset(fir, 0, sizeof fir);
+		memset(ok, 0, sizeof ok);
 		for (int i = 0; i < n; i++) {
-			if (last[t[i]] == -1)
-				bf[i] = 1;
-			else
-				bl[last[t[i]]] = 0;
-			last[t[i]] = i;
-			bl[i] = 1;
-			cnt[t[i]]++;
-			val[t[i]] = 2;
+			if (ok[t[i]] == 0)
+				fir[i] = 1;
+			ok[t[i]] = 1;
 		}
+		memset(val, 0, sizeof val);
 		long long ans = 0;
 		for (int i = 0; i < n; i++) {
-			if (bf[i]) {
-				reset();
-				for (int j = 0; j < N; j++) if (last[j] != -1) {
-					tmp[j] = val[j];
-					mul(val[j]);
-				}
-				rem(val[t[i]]);
-				for (int j = n-1; j > i; j--) {
-					if (t[j] != t[i]) {
-						rem(val[t[j]]);
-						if (bl[j]) {
-							ans += get();
-							if (ans >= mod) ans -= mod;
-						}
+			if (!fir[i]) continue;
+			int a = t[i];
+			for (int j = i+1; j < n; j++) {
+				int b = t[j];
+				bool fail = 0;
+				for (int z = i+1; z < j; z++) if (t[z] == b) fail = 1;
+				if (a == b || fail) continue;
+				for (int k = j+1; k < n; k++) {
+					int c = t[k];
+					bool fail2 = 0;
+					for (int z = j+1; z < k; z++) if (t[z] == c) fail2 = 1;
+					if (c == a || c == b || fail2) continue;
+					memset(val, 0, sizeof val);
+					val[a] = 7 ^ 1;
+					val[b] = 7 ^ 2;
+					val[c] = 7 ^ 4;
+					int now = 0;
+					for (int z = 0; z < n; z++) {
+						if (z == i) now = 1;
+						if (z == j) now = 2;
+						if (z == k) break;
+						if (z == i || z == j) continue;
+						val[t[z]] |= (1<< now);				
 					}
-					cnt[t[j]]--;
-					if (cnt[t[j]] == 0)
-						val[t[j]] &= 5;
-					val[t[j]] |= 1;
-					if (t[j] != t[i])
-						mul(val[t[j]]);
+					long long mul = 1;
+					for (int z = 0; z < 55; z++) if (ok[z]) {
+						int cnt = 3-__builtin_popcount(val[z]);
+						mul = (mul * cnt) % mod;
+					}
+					ans += mul;
+					if (ans >= mod) ans -= mod; 
 				}
-				for (int j = i+1; j < n; j++)
-					cnt[t[j]]++;
-				for (int j = 0; j < N; j++) if (last[j] != -1)
-					val[j] = tmp[j];
 			}
-			cnt[t[i]]--;
-			if (cnt[t[i]] == 0)
-				val[t[i]] = 0;
-			val[t[i]] |= 4;
 		}
-		return (int)ans;
+		return ans;
 	}
 };
 
@@ -113,7 +73,7 @@ int main(int argc, char* argv[])
 {
 	if (argc == 1) 
 	{
-		cout << "Testing MappingABC (500.0 points)" << endl << endl;
+		cout << "Testing MappingABC2 (1000.0 points)" << endl << endl;
 		for (int i = 0; i < 20; i++)
 		{
 			ostringstream s; s << argv[0] << " " << i;
@@ -121,18 +81,18 @@ int main(int argc, char* argv[])
 			if (exitCode)
 				cout << "#" << i << ": Runtime Error" << endl;
 		}
-		int T = time(NULL)-1485016548;
+		int T = time(NULL)-1486948532;
 		double PT = T/60.0, TT = 75.0;
 		cout.setf(ios::fixed,ios::floatfield);
 		cout.precision(2);
 		cout << endl;
 		cout << "Time  : " << T/60 << " minutes " << T%60 << " secs" << endl;
-		cout << "Score : " << 500.0*(.3+(.7*TT*TT)/(10.0*PT*PT+TT*TT)) << " points" << endl;
+		cout << "Score : " << 1000.0*(.3+(.7*TT*TT)/(10.0*PT*PT+TT*TT)) << " points" << endl;
 	}
 	else
 	{
 		int _tc; istringstream(argv[1]) >> _tc;
-		MappingABC _obj;
+		MappingABC2 _obj;
 		int _expected, _received;
 		time_t _start = clock();
 		switch (_tc)
@@ -157,14 +117,13 @@ int main(int argc, char* argv[])
 			}
 			case 3:
 			{
-				int t[] = {7,3000,1,3000,1,3000,1,10,7};
+				int t[] = {7,50,1,50,1,50,1,10,7};
 				_expected = 20;
 				_received = _obj.countStrings(vector <int>(t, t+sizeof(t)/sizeof(int))); break;
 			}
 			case 4:
 			{
-				int t[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,
-				          26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48};
+				int t[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48};
 				_expected = 166952139;
 				_received = _obj.countStrings(vector <int>(t, t+sizeof(t)/sizeof(int))); break;
 			}
