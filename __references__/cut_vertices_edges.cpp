@@ -1,4 +1,5 @@
 // Tarjan version again
+// directed graph
 void dfs(int v) {
   low[v]= num[v] = ++cntr;
   for(auto u : adj[v]) {
@@ -16,7 +17,7 @@ void dfs(int v) {
       low[v] = min(low[v], low[u]);
     }
     else if(u != parent[v])
-      low[v] = min(low[v], low[u]);
+      low[v] = min(low[v], num[u]);
   }
 }
 

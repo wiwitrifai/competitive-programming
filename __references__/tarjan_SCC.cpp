@@ -1,4 +1,5 @@
 /****** Tarjan’s SCC *******/
+// directed graph
 vector< int > num, low, S, vis;
 int cntr, numCC;
 
