@@ -18,19 +18,19 @@ struct Dinic {
   G[to].push_back(Edge(to, from, 0, 0, G[from].size() - 1));
   }
  
-  void GetVal(int nn) {
-      for (int i=0;i<G.size();i++)
-      {
-       for (int j=0;j<G[i].size();j++)
-       {
-         int a = G[i][j].from;
-         int b = G[i][j].to;
-         int f = G[i][j].flow;
-         Edge e = G[i][j];
-         if (f>0 && a>=1 && a<=nn && b>=nn+1 && b<=2*nn) ar[a][b-nn] = f;
-       }
-      }
-  }
+  // void GetVal(int nn) {
+  //     for (int i=0;i<G.size();i++)
+  //     {
+  //      for (int j=0;j<G[i].size();j++)
+  //      {
+  //        int a = G[i][j].from;
+  //        int b = G[i][j].to;
+  //        int f = G[i][j].flow;
+  //        Edge e = G[i][j];
+  //        if (f>0 && a>=1 && a<=nn && b>=nn+1 && b<=2*nn) ar[a][b-nn] = f;
+  //      }
+  //     }
+  // }
 
   long long BlockingFlow(int s, int t) {
   fill(dad.begin(), dad.end(), (Edge *) NULL);
