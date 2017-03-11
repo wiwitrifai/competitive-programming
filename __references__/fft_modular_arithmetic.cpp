@@ -1,7 +1,8 @@
 const int mod = 7340033;
 const int root = 5;
-const int root_1 = 4404020;
+const int root_1 = 4404020; // root ^ (-1) % mod
 const int root_pw = 1<<20;
+
  
 void fft (vector<int> & a, bool invert) {
   int n = (int) a.size();
