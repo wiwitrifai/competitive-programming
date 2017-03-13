@@ -3,70 +3,39 @@
 using namespace std;
 
 const int mod = 1e9 + 9;
-long long sisip[55][55], dp[55][55];
-long long powmod(long long b, long long p) {
-	long long ret = 1;
-	for (; p; p >>= 1, b = (b * b) % mod)
-		if (p & 1) ret = ret * b % mod;
-	return ret;
-}
+const int N = 55 * 55;
+int add[N][30];
+int dp[N][N];
 
 class LinenCenterEasy {
 public:
 	int countStrings(string S, int N, int K) {
 		int L = S.size();
-		bool cek[55];
-		for (int i = 0; i <= N; i++) {
-			cek[i] = 1;
-			for (int z = 0; z+i < L; z++)
-				if (S[z] != S[z+i])
-					cek[i] = 0;
-			cerr << i << " cek " << cek[i] << endl;
+		for (int i = 0; i < L; i++) {
+			for (int j = 0; j < 26; j++) {
+				if (S[i] == char(j+'a'))
+					add[i][j] = i+1;
+				else {
+					string pre = S.substr(0, i) + char(j+'a');
+					for (int k = 1; k <= pre.size(); k++)
+						if (pre.substr(i+1-k, i+1) == S.substr(0, k))
+							add[i][j] = k;
+				}
+			}
 		}
-		for (int i = 0; i <= N; i++) {
-			long long cur = 1;
-      for (int j = 0; j <= i; j++) {
-      	sisip[i][j] = powmod(26, j + max(0, i-(j+L)));
-      	cerr << sisip[i][j] << "^" << i << " " << j << " " << L << " b ";
-      }
-      cerr << i << endl;
-      for (int j = 0; j <= i; j++) {
-      	int jarak = i-j;
-      	bool ok = cek[jarak];
-      	if (ok) {
-      		for (int k = j+1; k <= i; k++)
-      			if (cek[k-j])
-      				sisip[i][k] = (sisip[i][k] + mod - sisip[i][j]) % mod;
-      	}
-      	else
-      		sisip[i][j] = 0;
-      	cerr << sisip[i][j] << "-" << cek[i-j] << " s ";
-      }
-      cerr << sisip[i][i] << endl;
-		}
+		memset(dp, 0, sizeof dp);
 		dp[0][0] = 1;
-		for (int i = 1; i <= K; i++) {
-			for (int j = 0; j <= N; j++) {
-				dp[i][j] = 0;
-				for (int k = 0; k <= j; k++) {
-					dp[i][j] = (dp[i][j] + dp[i-1][k] * sisip[j-k][j-k]) % mod;
-				}
-				cerr << dp[i][j] << " ";
+		for (int i = 1; i <= L * K + N; i++) {
+			for (int j = 0; j < i; j++) {
+				int full = (j/L) * L, res = j % L;
+				for (int c = 0; c < 26; c++)
+					(dp[i][full + add[res][c]] += dp[i-1][j]) %= mod;
 			}
-			cerr << endl;	
-		}
+		} 
 		long long ans = 0;
-		for (int k = 0; k <= N; k++) {
-			long long sum = 0;
-			for (int i = 0; i <= N-k; i++) {
-				sum = (sum + powmod(26, i)) % mod;
-				for (int z = 0; z + L <= i; z++) {
-					sum = (sum + mod - sisip[i][z]) % mod;
-				}
-			}
-			cerr << dp[K][k] << " sisa " << N-k << " " << sum <<  endl;
-			ans = (ans + sum * dp[K][k]) % mod;
-		}
+		for (int i = L * K; i <= L * K + N; i++)
+			for (int j = 0; j < L; j++)
+				ans = (ans + dp[i][K * L + j]) % mod;  
 		return ans;
 	}
 };
