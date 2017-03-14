@@ -2,51 +2,81 @@
 
 using namespace std;
 
-bool check(char s, char p) {
-	switch (s) {
-		case 'a':
-			return p == '0' || p == '1';
-		case 'A':
-			return p == '2' || p == '3';
-		case 'b':
-			return p == '0' || p == '2';
-		case 'B':
-			return p == '1' || p == '3';
+bool cek(char a, char b) {
+	if (a == 'a')
+		return b == '0' || b == '1';
+	if (a == 'A')
+		return b == '2' || b == '3';
+	if (a == 'b')
+		return b == '0' || b == '2';
+	if (a == 'B')
+		return b == '1' || b == '3';
+}
+bool cek(string a, int l, int r, string b) {
+	int n = b.size();
+	for (int i = 0; i < n; i++) {
+		if (i + l >= r) return 1;
+		if (!cek(a[i+l], b[i]))
+			return 0;
+	}
+	return 1;
+}
+char to[256];
+int dp[55][7], all[55];
+void mark(string &s, int id, string p) {
+	for (int i = 0; i < p.size(); i++) {
+		if (id + i >= s.size())
+			return;
+		if (!cek(s[id+i], p[i]))
+			s[id+i] = to[s[id+i]];
 	}
 }
-int dp[N][6];
 
 class Softmatch {
 public:
-	int count(string S, vector <string> patterns) {
-		int n = S.size(), m = patterns.size();
-		int ans = 0;
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < m; j++) {
-				if (i + patterns[j].size() > n)
-					continue;
-				int cnt = 0;
-				for (int k = 0; k < m; k++) {
-					if (patterns[k].size() > patterns[j].size()) continue;
-					bool ok = 1;
-					for (int z = 0; z < patterns[k].size(); z++)
-						if (check(S[i+z], patterns[j][z]) != check(S[i+z], patterns[k][z])) {
-							ok = 0;
-							break;
+	int count(string s, vector <string> patterns) {
+		to['A'] = 'a';
+		to['a'] = 'A';
+		to['B'] = 'b';
+		to['b'] = 'B';
+		memset(dp, 0, sizeof dp);
+		memset(all, 0, sizeof all);
+		int len = s.size(), n = patterns.size(), ans = 0;
+		for (int i = len-1; i >= 0; i--) {
+			all[i] = all[i+1];
+			for (int j = 0; j < n; j++) {
+				int r = i + patterns[j].size();
+				if (r > len) continue;
+				mark(s, i, patterns[j]);
+				dp[i][j] = all[r];
+				for (int k = 0; k < n; k++) {
+					for (int z = i; z < r; z++)
+						if (z + patterns[k].size() <= r) {
+							if (cek(s, z, r, patterns[k]))
+								dp[i][j]++;
 						}
-					cnt += ok;
+						else
+							break;
 				}
-				for (int x = 0; x < i; ++) {
-					for (int y = 0; y < m; y++) {
-						bool ok = 1;
-						for (int z = 0; z < patterns[k].size(); z++)
-								if (x+z >= i && ) {
-									ok = 0;
-									break;
+				for (int p = i; p < r; p++) {
+					for (int q = 0; q < n; q++) {
+						int r2 = p + patterns[q].size();
+						if (r2 <= r || r2 > len) continue;
+						if (!cek(s, p, r, patterns[q])) continue;
+						mark(s, p, patterns[q]);
+						int cur = dp[p][q];
+						for (int k = 0; k < n; k++) {
+							for (int z = i; z < p; z++)
+								if (z + patterns[k].size() <= r2) {
+									if (cek(s, z, r2, patterns[k]))
+										cur++;
 								}
-									
+						}
+						dp[i][j] = max(dp[i][j], cur);
 					}
 				}
+				ans = max(ans, dp[i][j]);
+				all[i] = max(all[i], dp[i][j]);
 			}
 		}
 		return ans;
@@ -75,7 +105,7 @@ int main(int argc, char* argv[])
 			if (exitCode)
 				cout << "#" << i << ": Runtime Error" << endl;
 		}
-		int T = time(NULL)-1487701001;
+		int T = time(NULL)-1489464796;
 		double PT = T/60.0, TT = 75.0;
 		cout.setf(ios::fixed,ios::floatfield);
 		cout.precision(2);
@@ -133,20 +163,20 @@ int main(int argc, char* argv[])
 				_expected = 7;
 				_received = _obj.count(S, vector <string>(patterns, patterns+sizeof(patterns)/sizeof(string))); break;
 			}
-			/*case 6:
+			case 6:
 			{
-				string S = ;
-				string patterns[] = ;
-				_expected = ;
+				string S = "bbababababbbaaaaaaaabbababbaaababab";
+				string patterns[] = {"3230"};
+				_expected = 13;
 				_received = _obj.count(S, vector <string>(patterns, patterns+sizeof(patterns)/sizeof(string))); break;
-			}*/
-			/*case 7:
+			}
+			case 7:
 			{
-				string S = ;
-				string patterns[] = ;
-				_expected = ;
+				string S = "bbbbabbbabbbbbaabaabbbbbbbababaaababbbababaaaa";
+				string patterns[] = {"2", "0021002"};
+				_expected = 46;
 				_received = _obj.count(S, vector <string>(patterns, patterns+sizeof(patterns)/sizeof(string))); break;
-			}*/
+			}
 			/*case 8:
 			{
 				string S = ;
