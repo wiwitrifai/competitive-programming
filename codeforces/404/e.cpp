@@ -1,13 +1,6 @@
-/**
- * Treap = BST + Heap
- * alternative name: - Cartesian Tree
- *                   - Randomized BST
- */
-
 #include <bits/stdc++.h>
 
 using namespace std;
-
 typedef struct item * pitem;
 struct item
 {
@@ -94,7 +87,71 @@ int get(pitem & t, int key) {
     return cnt(t->l) + 1 + get(t->r, key);
 }
 
+const int N = 2e5 + 5;
+pitem seg[N << 2];
+int n, a[N];
+void build(int id = 1, int l = 0, int r = n) {
+  seg[id] = NULL;
+  for (int i = l; i < r; i++)
+    insert(seg[id], new item(i, rand()));
+  // cerr << l << " build " << r << endl;
+  // print(seg[id]);
+  if (r-l < 2) {
+    a[l] = l;
+    return;
+  }
+  int mid = (l + r) >> 1, il = id << 1, ir = il | 1;
+  build(il, l, mid);
+  build(ir, mid, r);
+}
+void upd(int x, int val, int id = 1, int l = 0, int r = n) {
+  erase(seg[id], a[x]);
+  insert(seg[id], new item(val, rand()));
+  if (r-l < 2) {
+    a[x] = val;
+    return;
+  }
+  int mid = (l + r) >> 1, il = id << 1, ir = il | 1;
+  if (x < mid)
+    upd(x, val, il, l, mid);
+  else
+    upd(x, val, ir, mid, r);
+}
+int get(int x, int y, int up, int id = 1, int l = 0, int r = n) {
+  if (x >= r || l >= y) return 0;
+  if (x <= l && r <= y) {
+    // print(seg[id]);
+    // cerr << l << " " << r << " " << get(seg[id], up) << endl;
+    return get(seg[id], up);
+  }
+  int mid = (l + r) >> 1, il = id << 1, ir = il | 1;
+  return get(x, y, up, il, l, mid) + get(x, y, up, ir, mid, r);
+}
+
 int main() {
-  
+  int q;
+  scanf("%d %d", &n, &q);
+  build();
+  // cerr << get(0, 3, 2) << endl;
+  long long ans = 0;
+  while (q--) {
+    int l, r;
+    scanf("%d %d", &l, &r);
+    l--, r--;
+    if (l > r) swap(l, r);
+    if (l != r) {
+      int vl = a[l], vr = a[r];
+      int cl = get(l+1, r, vl), cr = get(l+1, r, vr);
+      int len = r-l + 1;
+      ans += 2LL * (cr-cl);
+      if (vl < vr)
+        ans++;
+      else
+        ans--;
+      upd(l, vr);
+      upd(r, vl);
+    }
+    printf("%lld\n", ans);
+  }
   return 0;
 }
