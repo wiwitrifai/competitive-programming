@@ -10,14 +10,15 @@ int dp[N];
 map< int, int > ds[2][N];
 
 void upd(int t, int id, int nx, int val) {
-  auto it = ds[t][id].find(nx);
+  auto it = ds[t][id].find(val);
   if (it == ds[t][id].end())
-    ds[t][id][nx] = val;
+    ds[t][id][val] = nx;
   else
-    ds[t][id][nx] = max(val, it->second);
+    ds[t][id][val] = min(nx, it->second);
 }
 
 int main() {
+  time_t startt = clock();
   scanf("%d", &n);
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < n; j++)
@@ -49,18 +50,20 @@ int main() {
     dp[last[2][i]] = max(dp[last[2][i]], dp[i] + 1); 
     dp[i+1] = max(dp[i+1], dp[i]);
     for (int j = 0; j < 2; j++) {
-      for (auto it : ds[j][i]) {
-        int b = j ^ 1;
-        dp[it.first] = max(dp[it.first], it.second);
-        if (last[j][i] < it.first)
-          upd(j, last[j][i], it.first, it.second+1);
-        else if (last[j][i] > it.first)
-          upd(b, it.first, last[j][i], it.second+1);
-        else
-          dp[it.first] = max(dp[it.first], it.second+1);
-      }
+      auto itt = ds[j][i].find(dp[i]+1);
+      if (itt == ds[j][i].end()) continue;
+      auto it = *itt;
+      int b = j^1;
+      dp[it.second] = max(dp[it.second], it.first);
+      if (last[j][i] < it.second)
+        upd(j, last[j][i], it.second, it.first+1);
+      else if (last[j][i] > it.second)
+        upd(b, it.second, last[j][i], it.first+1);
+      else
+        dp[it.second] = max(dp[it.second], it.first+1);
     }
   }
   cout << dp[n] << endl;
+  cerr << (double)(clock()-startt) * 1000 / CLOCKS_PER_SEC << " ms\n";
   return 0;
 }
