@@ -13,5 +13,5 @@ Here are list of my handles/usernames in some online judges/competitive programm
 - A2 OJ           : [iafir](https://a2oj.com/profile?Username=iafir)
 - SPOJ            : [iafir](http://www.spoj.com/users/iafir/)
 - UVa OJ          : [iafir](http://uhunt.felix-halim.net/id/520488)
-- Hackerrank      : [gowatgowit](https://www.hackerrank.com/gowatgowit)
+- Hackerrank      : [iafir](https://www.hackerrank.com/iafir)
 - Hackerearth     : [wiwitrifai](https://www.hackerearth.com/@wiwitrifai)
