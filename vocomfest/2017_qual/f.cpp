@@ -60,7 +60,7 @@ int main() {
     double nearest = inf;
     point ans;
     for (int i = 0, j = 0; i < n; i++) {
-      while (j < i && p[i].x - p[j].x > r) st.erase(p[j++]);
+      while (j < i && p[i].x - p[j].x > nearest) st.erase(p[j++]);
       auto it = st.lower_bound(point(-1, p[i].y-nearest));
       while (it != st.end()) {
         if (it->y > p[i].y + r) break;

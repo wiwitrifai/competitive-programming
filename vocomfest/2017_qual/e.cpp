@@ -7,7 +7,7 @@ const int N = 111;
 pair< int, int > pos[N];
 long long dist(pair< int, int > a, pair< int, int > b) {
   long long dx = a.first - b.first, dy = a.second - b.second;
-  return dx * dx + dy * dy;
+  return abs(dx) + abs(dy);
 }
 string name[N];
 
