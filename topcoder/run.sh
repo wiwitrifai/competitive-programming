@@ -6,7 +6,7 @@ filename="${fullname%.*}"
 echo "$filename" "$extension"
 if [ "$extension" = "cpp" ]; then
   g++ "$fullname" -o e
-  if [ $? ]; then
+  if [ $? -eq 0 ]; then
    echo "compiled"
    ./e
    rm e
@@ -15,7 +15,7 @@ if [ "$extension" = "cpp" ]; then
   fi
 elif [ "$extension" = "java" ]; then
   javac "$fullname"
-  if [ $? ]; then 
+  if [ $? -eq 0 ]; then 
     echo "compiled"
     java "$filename"
     rm "$filename"".class"
