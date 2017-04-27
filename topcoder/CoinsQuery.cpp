@@ -6,7 +6,7 @@ const int mod = 1e9 + 7;
 
 struct node {
 	long long val, cnt;
-	node(long long val = 0, long long cnt = 0) : val(val), cnt(cnt) {}
+	node(long long val = -1, long long cnt = 0) : val(val), cnt(cnt) {}
 	node operator+(node other) {
 		if (val == other.val)
 			return node(val, (cnt + other.cnt) % mod);
@@ -15,6 +15,7 @@ struct node {
 		return *this;
 	}
 	node operator*(node other) {
+		if (val == -1 || other.val == -1) return node();
 		return node(val + other.val, cnt * other.cnt % mod);
 	}
 };
@@ -24,12 +25,12 @@ struct matrix {
 	node a[103][103];
 	matrix(int n = 0, int m = 0) : n(n), m(m) {}
 	node* operator[](int id) { return a[id]; }
-	node* operator[](int id) const { return a[id]; }
+	const node* operator[](int id) const { return a[id]; }
   matrix operator*(matrix other) {
-  	matrix ret;
+  	matrix ret(n, other.m);
   	for (int i = 0; i < n; i++) {
   		for (int j = 0; j < other.m; j++) {
-  			for (int i = 0; i < m; ++i) {
+  			for (int k = 0; k < m; ++k) {
          ret[i][j] = ret[i][j] + a[i][k] * other[k][j];
        }
   		}
@@ -46,17 +47,30 @@ public:
 	  matrix b(100, 100);
     memset(ma, 0, sizeof ma);
     for (int i = 0; i < n; ++i) {
-      if (ma[w[i]] < v[i])
-      	ma[w[i]] = v[i], cnt[w[i]] = 1;
-      else if (ma[w[i]] == v[i])
-      	cnt[w[i]]++;
-    }
-    for (int i = 0; i < 100; ++i) {
-    	b[0][i] = node(ma[i+1], cnt[i+1]);
+    	b[0][w[i]-1] = b[0][w[i]-1] + node(v[i], 1);
     }
     for (int i = 1; i < 100; ++i) {
-    	
+    	b[i][i-1] = node(0, 1);
     }
+    vector< matrix > m;
+    m.push_back(b);
+    int ma = 0;
+    for (int v : query)
+    	ma = max(v, ma);
+    while ((1LL << m.size()) <= ma) m.push_back(m.back() * m.back());
+    vector< long long > ans;
+    for (int i = 0; i < query.size(); i++) {
+      matrix v(100, 1);
+      v[0][0] = node(0, 1);
+      for (int j = 0; j < m.size(); j++)
+      	if (query[i] & (1<<j))
+	      	v = m[j] * v;
+	     node res = v[0][0];
+	     if (res.val == -1) res.cnt = -1;
+	     ans.push_back(res.val);
+	     ans.push_back(res.cnt);
+    }
+    return ans;
 	}
 };
 
