@@ -1,4 +1,7 @@
 #!/bin/bash
 
-echo "remove file '.txt'"
-rm *.txt
+for txt in `ls *.txt`; do
+    echo remove: $txt
+    rm $txt
+done
+echo "All .txt removed"
