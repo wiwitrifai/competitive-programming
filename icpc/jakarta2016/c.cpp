@@ -1,3 +1,7 @@
+/**
+ *  ACM ICPC Regional Jakarta 2016 - C : Stress Factor
+ */
+
 #include <bits/stdc++.h>
 
 using namespace std;
