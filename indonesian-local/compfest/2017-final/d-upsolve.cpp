@@ -2,7 +2,7 @@
  * Upsolve after contest
  * Author  : Wiwit Rifa'i
  * Problem : D - Xor-or
- * Status  : ?
+ * Status  : Accepted
  */
 
 #include <bits/stdc++.h>

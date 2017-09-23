@@ -2,7 +2,7 @@
  * Upsolve after contest
  * Author  : Wiwit Rifa'i
  * Problem : F - Pasti menang!
- * Status  : ?
+ * Status  : Accepted
  */
 
 #include <bits/stdc++.h>

@@ -2,7 +2,7 @@
  * Upsolve after contest
  * Author  : Wiwit Rifa'i
  * Problem : B - Bersama Waifu
- * Status  : ?
+ * Status  : Accepted
  */
 
 #include <bits/stdc++.h>
@@ -42,6 +42,7 @@ bool dfs(int v) {
   vis[v] = 1;
   for (int u : g[v]) if (matched[u] == -1 || dfs(matched[u]))
     return match[v] = u, matched[u] = v, true;
+  return false;
 }
 
 int main() {

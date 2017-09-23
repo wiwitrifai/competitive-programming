@@ -2,7 +2,7 @@
  * Upsolve after contest
  * Author  : Wiwit Rifa'i
  * Problem : G - Pertukaran Chanek
- * Status  : ?
+ * Status  : Accepted
  */
 
 #include <bits/stdc++.h>

@@ -1,3 +1,10 @@
+/**
+ * Contest : COMPFEST 2017 Qualification
+ * Team    : Ainge WF
+ * Author  : Wiwit Rifa'i
+ * Problem : H - Palindromisme
+ */
+
 #include <bits/stdc++.h>
 
 using namespace std;

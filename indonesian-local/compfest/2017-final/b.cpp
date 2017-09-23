@@ -70,13 +70,12 @@ point p[505];
 int n;
 point a, b;
 
-int process(point c, int lewat) {
+int process(point c) {
     if (cross(a, c, b) < 0)
       swap(a, b);
     if (fabs(cross(a, c, b)) < eps) return n;
-    int cntl = 0, cntr = 0, da = lewat >= 0, db = lewat >= 0, cc = lewat >= 0, la = 0, lb = 0;
+    int cntl = 0, cntr = 0, da = 0, db = 0, cc = 0, la = 0, lb = 0;
     for (int j = 0; j < n; j++) {
-      if (j == lewat) continue;
       long double ca = cross(a, c, p[j]), cb = cross(b, c, p[j]);
       if (fabs(ca) < eps || fabs(cb) < eps) {
         cc += fabs(ca) < eps && fabs(cb) < eps;
@@ -104,8 +103,6 @@ int process(point c, int lewat) {
     ans = min(ans, min(cur, n-cur));
     cur = cntl + la + lb;
     ans = min(ans, min(cur, n-cur));
-    // cerr << c.x << " " << c.y << " " << cntl << " " << da << " " << db << " " << la << " " << lb << endl;
-    // cerr << ans << endl;
     return ans;
 }
 
@@ -135,7 +132,7 @@ int main() {
     ans = min(ans, min(ri + dia, n-dia-ri));
     for (int i = 0; i < n; i++) {
       if (fabs(cross(p[i], a, b)) > eps)
-        ans = min(ans, process(p[i], i));
+        ans = min(ans, process(p[i]));
       for (int j = 0; j < n; j++) {
         if (i == j) continue;
         point c;
@@ -143,7 +140,7 @@ int main() {
         pointToLine(a, p[i], &l1);
         pointToLine(b, p[j], &l2);
         if (areIntersect(l1, l2, &c)) {
-          ans = min(ans, process(c, -1));
+          ans = min(ans, process(c));
         }
       }
     }
