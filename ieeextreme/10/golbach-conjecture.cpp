@@ -79,7 +79,6 @@ int main() {
     }
     long long n;
     cin >> n;
-    cerr << mrtest(n) << endl;
     long long a = -1, b, c;
     for (int i = 4; i < N && a < 0; i += 2) {
         long long m = n - i;
@@ -94,7 +93,10 @@ int main() {
             } 
         }
     }
-    printf("%lld %lld %lld\n", a, b, c);
+    if (a < 0)
+        puts("counterexample");
+    else
+        printf("%lld %lld %lld\n", a, b, c);
 
     return 0;
 }

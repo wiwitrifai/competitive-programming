@@ -2,6 +2,7 @@
   IEEExtreme Programming Contest 10
   Problem : Dog Walking
   Solver  : Wiwit Rifa'i
+  Status  : Accepted
 */
 
 #include <bits/stdc++.h>

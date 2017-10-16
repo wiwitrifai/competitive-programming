@@ -2,7 +2,7 @@
   IEEExtreme Programming Contest 10
   Problem : Checkers Challange
   Solver  : Wiwit Rifa'i
-  Status  : Still Wrong Answer :"(
+  Status  : Accepted
 */
 
 #include <bits/stdc++.h>
@@ -15,7 +15,7 @@ char s[8][8];
 long long dp[64][1 << 16][2][4];
 bool vis[64][1 << 16][2][4];
 
-int id[8][8], dx[] = {-1, 0, 0, 1}, dy[] = {0, -1, 1, 0};
+int id[8][8], dx[] = {1, 0, 0, -1}, dy[] = {0, -1, 1, 0};
 bool valid(int a, int b) {
   return a >= 0 && b >= 0 && a < 8 && b < 8;
 }
@@ -49,6 +49,10 @@ struct state {
   void go() {
     if (pos < 0)
       return;
+    if (!king && !dir) {
+      pos = -1;
+      return;
+    }
     int a = pos / 8, b = pos % 8;
     a += dx[dir];
     b += dy[dir];
@@ -69,8 +73,8 @@ struct state {
   }
   void remove() {
     int a = pos / 8, b = pos % 8;
-    if (id[a][b] >= 0 && (mask & (1<<id[a][b])))
-      mask ^= 1<<id[a][b];
+    assert(id[a][b] >= 0 && (mask & (1<<id[a][b])));
+    mask ^= 1<<id[a][b];
   }
   void debug() {
     cerr << pos/8 << "," << pos % 8 << " " << mask << " " << king << " " << dir << " " << dp[pos][mask][king][dir] << endl;;
@@ -129,8 +133,8 @@ int main() {
           continue;
         if (!tmp.black())
           continue;
-        tmp.go();
         tmp.remove();
+        tmp.go();
         if (tmp.pos < 0)
           continue;
         if (tmp.black())
@@ -174,8 +178,8 @@ int main() {
             continue;
           if (!nx.black())
             continue;
-          nx.go();
           nx.remove();
+          nx.go();
           if (nx.pos < 0)
             continue;
           if (nx.black())

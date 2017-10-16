@@ -40,50 +40,60 @@ void build(int id = 1, int l = 0, int r = n) {
     for (int i = 0; i < 26; i++)
       ss[id][i] = 0;
     int c = s[l] - 'a';
-    ss[id][c]++;
-    hs[id] = c;
+    ss[id][c] = pp[l];
+    hs[id] = pp[l] * c % mod;
     return;
   }
   int mid = (l + r) >> 1, il = id << 1, ir = il | 1;
   build(il, l, mid);
   build(ir, mid, r);
-  hs[id] = (hs[il] + hs[ir] * pp[mid-l]) % mod;
+  hs[id] = hs[il] + hs[ir];
+  if (hs[id] >= mod)
+    hs[id] -= mod;
   for (int i = 0; i < 26; i++) {
-    ss[id][i] = (ss[il][i] + ss[ir][i] * pp[mid-l]) % mod;
+    ss[id][i] = ss[il][i] + ss[ir][i];
+    if (ss[id][i] >= mod)
+      ss[id][i] -= mod;
   }
 }
 
+long long tmp[26];
 void upd(int id, int l, int r, int k, int d) {
-  d %= 26;
-  if (d < 0)
-    d += 26;
   if (k >= 0) {
     int len = r-l;
-    long long norm = ip[k];
+    long long norm = (ip[k] * pp[l]) % mod;
     hs[id] = 0;
     for (int i = 0; i < 26; i++) {
-      int j = (i+d) % 26;
-      ss[id][j] = ((hh[k+len-1][i] - (k > 0 ? hh[k-1][i] : 0)) * norm) % mod;
+      int j = j = i + d;
+      if (j >= 26)
+        j -= 26;
+      ss[id][j] = (hh[k+len-1][i] - (k > 0 ? hh[k-1][i] : 0)) * norm % mod;
       if (ss[id][j] < 0)
         ss[id][j] += mod;
-      hs[id] = (hs[id] + ss[id][j] * j) % mod;
+      hs[id] += ss[id][j] * j;
     }
+    hs[id] %= mod;
     if (hs[id] < 0)
       hs[id] += mod;
     beg[id] = k;
     add[id] = d;
   }
   else if (d > 0) {
-    long long tmp[26];
     for (int i = 0; i < 26; i++)
       tmp[i] = ss[id][i];
     hs[id] = 0;
     for (int i = 0; i < 26; i++) {
-      int j = (i + d) % 26;
+      int j = i + d;
+      if (j >= 26)
+        j -= 26;
       ss[id][j] = tmp[i];
-      hs[id] = (hs[id] + ss[id][j] * j) % mod;
+      hs[id] += ss[id][j] * j;
     }
+    hs[id] %= mod;
+    if (hs[id] < 0) hs[id] += mod;
     add[id] += d;
+    if (add[id] >= 26)
+      add[id] -= 26;
   }
 }
 
@@ -104,22 +114,27 @@ void update(int x, int y, int k, int d, int id = 1, int l = 0, int r = n) {
   shift(id, l, r);
   update(x, y, k, d, il, l, mid);
   update(x, y, k, d, ir, mid, r);
-  hs[id] = (hs[il] + hs[ir] * pp[mid-l]) % mod;
+  hs[id] = hs[il] + hs[ir];
+  if (hs[id] >= mod)
+    hs[id] -= mod;
   for (int i = 0; i < 26; i++) {
-    ss[id][i] = (ss[il][i] + ss[ir][i] * pp[mid-l]) % mod;
+    ss[id][i] = ss[il][i] + ss[ir][i];
+    if (ss[id][i] >= mod)
+      ss[id][i] -= mod;
   }
 }
 long long get(int x, int y, int id = 1, int l = 0, int r = n) {
   if (x >= r || y <= l) return 0;
   if (x <= l && r <= y) {
-    long long ret = (hs[id] * pp[l-x]) % mod;
-    if (ret < 0)
-      ret += mod;
+    long long ret = hs[id];
     return ret;
   }
   int mid = (l + r) >> 1, il = id << 1, ir = il | 1;
   shift(id, l, r);
-  return (get(x, y, il, l, mid) + get(x, y, ir, mid, r)) % mod;
+  long long ret = get(x, y, il, l, mid) + get(x, y, ir, mid, r);
+  if (ret >= mod)
+    ret -= mod;
+  return ret;
 }
 
 int main() {
@@ -152,8 +167,10 @@ int main() {
     if (ty == 1) {
       scanf("%d", &k);
       k--;
-      long long res1 = get(l, r);
-      long long res2 = get(k, k + r-l);
+      long long res1 = get(l, r) * ip[l] % mod;
+      long long res2 = get(k, k + r-l) * ip[k] % mod;
+      if (res1 < 0) res1 += mod;
+      if (res2 < 0) res2 += mod;
       puts(res1 == res2 ? "Y" : "N");
     }
     else if (ty == 2) {
