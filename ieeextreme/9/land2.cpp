@@ -65,7 +65,7 @@ vector<point> convexHull(vector<point> vp) {
   return res;
 }
 long long area(point a, point b, point c) {
-  return abs(cross(a, b, c));
+  return llabs(cross(a, b, c));
 }
 
 int main() {
