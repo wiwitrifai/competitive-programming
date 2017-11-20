@@ -50,6 +50,29 @@ struct seg_tree {
 
 seg_tree st;
 
+pair<int, int> lineSweep(vector<pair<int, pair<int, int> > > &ev, int ns) {
+  sort(ev.begin(), ev.end());
+  st.build(1, 0, ns);
+  int xm = n+1, ym = ns;
+  for (int i = 0; i < ev.size(); ) {
+    int vx = ev[i].first;
+    if (vx > n) break;
+    while (i < ev.size() && ev[i].first == vx) {
+      int lo = ev[i].second.first, hi = ev[i].second.second;
+      int add = 1;
+      if (lo > hi)
+        swap(lo, hi), add = -1;
+      st.upd(lo, hi, add, 1, 0, ns);
+      i++;
+    }
+    if (st.mn[1] == 0) {
+      xm = min(xm, vx);
+      ym = min(ym, st.le[1]);
+    }
+  }
+  return make_pair(xm, ym);
+}
+
 
 bool can(int t) {
   vector< int > vy;
@@ -77,34 +100,14 @@ bool can(int t) {
     ev.push_back({max(x[i]-t, 1), {lo, hi}});
     ev.push_back({min(x[i]+t+1, n+1), {hi, lo}});
   }
-  sort(ev.begin(), ev.end());
-  int ns = vy.size() - 1;
-  st.build(1, 0, ns);
-  bool used = 0;
-  for (int i = 0; i < ev.size(); ) {
-    int vx = ev[i].first;
-    if (vx > n) break;
-    while (i < ev.size() && ev[i].first == vx) {
-      int lo = ev[i].second.first, hi = ev[i].second.second;
-      int add = 1;
-      if (lo > hi)
-        swap(lo, hi), add = -1;
-      st.upd(lo, hi, add, 1, 0, ns);
-      i++;
-    }
-    if (st.mn[1] == 0) {
-      if (used) return false;
-      int lo = vy[st.le[1]], hi = min(lo + 2 * t + 1, m + 1);
-      lo = st.le[1], hi = lower_bound(vy.begin(), vy.end(), hi) - vy.begin();
-      ev.push_back({min(vx + 2 * t + 1, n+1), {hi, lo}});
-      st.upd(lo, hi, 1, 1, 0, ns);
-      sort(ev.begin() + i, ev.end());
-      used = true;
-    }
-    if (st.mn[1] == 0)
-      return false;
-  }
-  return true;
+  int ns = (int)vy.size() - 1;
+  pair<int, int > res = lineSweep(ev, ns);
+  int xm = res.first, ym = res.second;
+  if (xm > n) return true;
+  int lo = ym, hi = lower_bound(vy.begin(), vy.end(), min(vy[ym] + 2*t + 1, m +1)) - vy.begin();
+  ev.push_back({max(xm, 1), {lo, hi}});
+  ev.push_back({min(xm + 2 * t, n) + 1, {hi, lo}});
+  return lineSweep(ev, ns).first > n;
 }
 
 int main() {
