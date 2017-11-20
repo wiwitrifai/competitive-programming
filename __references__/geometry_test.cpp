@@ -3,9 +3,8 @@
 using namespace std;
 
 const double EPS = 1e-9;
-const PI = acos(-1);
+const double PI = acos(-1);
 
-// (POINT)
 struct point {
   double x, y;
   point(double x = 0, double y = 0) : x(x), y(y) {}
@@ -20,6 +19,7 @@ struct point {
   point operator+(point p) const { return point(x + p.x, y + p.y); }
   point operator-(point p) const { return point(x - p.x, y - p.y); }
   point operator*(double scale) const { return point(x * scale, y * scale); }
+  point operator/(double scale) const { return point(x / scale, y / scale); }
 };
 
 double dist(point a, point b) {
@@ -30,7 +30,7 @@ double dist(point a, point b) {
 point rotate(point p, double tetha) {
   // rotate matrix R(theta0 = [cos(theta) -sin(theta)]
   //            [sin(theta)  cos(theta)]
-  double rad = tehta * PI / 180.0;
+  double rad = tetha * PI / 180.0;
   return point(p.x*cos(rad) - p.y*sin(rad), p.x*sin(rad) + p.y*cos(rad));
 }
 double cross(point a, point b) {
@@ -41,6 +41,9 @@ double dot(point a, point b) {
 }
 double norm_sq(point p) {
   return dot(p, p);
+}
+double norm(point p) {
+  return sqrt(dot(p, p));
 }
 // return 1 = ccw, 0 = colinear, -1 = cw
 int ccw(point p, point q, point r) {
@@ -58,7 +61,6 @@ double angle(point a, point o, point b) {
   return acos(dot(oa, ob) / sqrt(norm_sq(oa) * norm_sq(ob)));
 }
 
-
 // (LINE)
 struct line { double a,b,c; };
 void pointToLine(point p1, point p2, line& l) {
@@ -66,7 +68,7 @@ void pointToLine(point p1, point p2, line& l) {
     l.a = 1.0; l.b = 0.0; l.c = -p1.x;
   }
   else {
-    l.a = -(double)(p1.y - p2.y)/(p1.x - p2.x)l
+    l.a = -(double)(p1.y - p2.y)/(p1.x - p2.x);
     l.b = 1.0;
     l.c = -(double)(l.a * p1.x) - (l.b * p1.y);
   }
@@ -134,22 +136,10 @@ void reflectionPoint(line l, point p, point &ans) {
   ans = b * 2 - p;
 }
 
-
-
-// (Circle & Triangle)
-// Find two center of same size circle from its intersection and their radius
-bool circle2PtsRad(point p1, point p2, double r, point &c) {
-  double d2 = (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y); // = norm_sq(p1-p2)
-  double det = r * r / d2 - 0.25;
-  if(det < 0.0) return false;
-  double h = sqrt(det);
-  c.x = (p1.x + p2.x) * 0.5 + (p1.y - p2.y) * h;
-  c.y = (p1.y + p2.y) * 0.5 + (p2.x - p1.x) * h;
-  return true;
-}
 vector<point> interCircle(point o1, double r1, point o2, double r2) {
   double d2 = norm_sq(o1 - o2);
   double d = sqrt(d2);
+  if (d < EPS) return {};
   if (d < abs(r1-r2)) return {};
   if (d > r1+r2) return {};
   point u = (o1+o2) * 0.5 + (o1-o2)*((r2*r2-r1*r1)/(2*d2));
@@ -157,7 +147,37 @@ vector<point> interCircle(point o1, double r1, point o2, double r2) {
   point v = point(o1.y-o2.y, -o1.x+o2.x) * (A / (2*d2));
   return {u+v, u-v};
 }
-// Heron's formula
+point inCenter(point &A, point &B, point &C) { // 内心
+  double a = norm(B-C), b = norm(C-A), c = norm(A-B);
+  return (A * a + B * b + C * c) / (a + b + c);
+}
+point circumCenter(point &a, point &b, point &c) { // 外心
+  point bb = b - a, cc = c - a;
+  double db = norm_sq(bb), dc = norm_sq(cc), d= 2*cross(bb, cc);
+  return a-point(bb.y*dc-cc.y*db, cc.x*db-bb.x*dc) / d;
+}
+point orthoCenter(point &a, point &b, point &c) { // 垂心
+  point ba = b - a, ca = c - a, bc = b - c;
+  double y = ba.y * ca.y * bc.y,
+    A = ca.x * ba.y - ba.x * ca.y,
+    x0= (y+ca.x*ba.y*b.x-ba.x*ca.y*c.x) / A,
+    y0= -ba.x * (x0 - c.x) / ba.y + ca.y;
+  return point(x0, y0);
+}
+
+void testInterCircle() {
+  point o1, o2;
+  double r1, r2;
+  cin >> o1.x >> o1.y;
+  cin >> o2.x >> o2.y;
+  cin >> r1 >> r2;
+  vector<point> res = interCircle(o1, r1, o2, r2);
+  for (point p : res) {
+    cout << p.x << " " << p.y << endl;
+    cerr << " dist to o1 : " << sqrt(norm_sq(p-o1)) << endl;
+    cerr << " dist to o2 : " << sqrt(norm_sq(p-o2)) << endl;
+  }
+}
 double heron(double a, double b, double c) {
   double s = (a + b + c) * 0.5;
   return sqrt(s * (s - a)) * sqrt((s-b) * (s-c));
@@ -166,6 +186,7 @@ double heron(double a, double b, double c) {
 double areaTriangle(point a, point b, point c) {
   return fabs(cross(a-b, c-b)) * 0.5;
 }
+
 double rInCircle(double ab, double bc, double ca) {
   return heron(ab, bc, ca) / (0.5 * (ab + bc + ca));
 }
@@ -195,23 +216,6 @@ double rCircumCircle(point a, point b, point c) {
   return rCircumCircle(dist(a, b), dist(b, c), dist(c, a));
 }
 
-point inCenter(point &A, point &B, point &C) { // 内心
-  double a = norm(B-C), b = norm(C-A), c = norm(A-B);
-  return (A * a + B * b + C * c) / (a + b + c);
-}
-point circumCenter(point &a, point &b, point &c) { // 外心
-  point bb = b - a, cc = c - a;
-  double db = norm_sq(bb), dc = norm_sq(cc), d= 2*cross(bb, cc);
-  return a-point(bb.y*dc-cc.y*db, cc.x*db-bb.x*dc) / d;
-}
-point othroCenter(point &a, point &b, point &c) { // 垂心
-  point ba = b - a, ca = c - a, bc = b - c;
-  double y = ba.y * ca.y * bc.y,
-    A = ca.x * ba.y - ba.x * ca.y,
-    x0= (y+ca.x*ba.y*b.x-ba.x*ca.y*c.x) / A,
-    y0= -ba.x * (x0 - c.x) / ba.y + ca.y;
-  return point(x0, y0);
-}
 
 point perp(const point& p) {
   return point(p.y, -p.x);
@@ -242,112 +246,35 @@ vector<pair<point, point> > tangent2Circle(point o1, double r1, point o2, double
 }
 
 
-
-// (Polygon)
-double area(const vector< point > & P) {
-  double result = 0.0;
-  for(int i = 0; i< (int)P.size()-1; i++) {
-    result += (P[i].x * P[i+1].y - P[i].y*P[i+1].x); // cross(P[i], P[i+1]);
-  }
-  return fabs(result)/2.0;
+void testInCircle() {
+  point a, b, c;
+  cin >> a.x >> a.y;
+  cin >> b.x >> b.y;
+  cin >> c.x >> c.y;
+  point p = inCenter(a, b, c);
+  cout << p.x << " " << p.y << endl;
+  point q;
+  cout << distToLineSegment(p, a, b, q) << " " << distToLineSegment(p, b, c, q) << " " << distToLineSegment(p, a, c, q) << endl;
+  cout << rInCircle(a, b, c) << endl;
 }
+void testCircumCircle() {
+  point a, b, c;
+  cin >> a.x >> a.y;
+  cin >> b.x >> b.y;
+  cin >> c.x >> c.y;
+  point p = circumCenter(a, b, c);
 
-// check if point p inside (CONVEX/CONCAVE) polygon vp
-int inPolygon(point p, const vector< point >& vp) {
-  int wn = 0, n = (int)vp.size() - 1;
-  for(int i = 0; i<n; i++) {
-    int cs = ccw(vp[i+1], vp[i], p);
-    if(cs == 0 && p.x <= max(vp[i].x, vp[i+1].x) && p.x >= min(vp[i].x, vp[i+1].x)
-      && p.y <= max(vp[i].y, vp[i+1].y) && p.y >= min(vp[i].y, vp[i+1].y))
-      return 1; // between(vp[i], p, vp[i+1])
-    if(vp[i].y <= p.y) {
-      if(vp[i+1].y > p.y && cs > 0)
-        wn++;
-    }
-    else {
-      if(vp[i+1].y <= p.y && cs < 0)
-        wn--;
-    }
-  }
-  return wn;
 }
-
-// line segment p-q intersect with line A-B
-point lineIntersectSeg(point p, point q, point A, point B) {
-  double a = B.y - A.y;
-  double b = A.x - B.x;
-  double c = B.x * A.y - A.x * B.y;
-  double u = fabs(a * p.x + b * p.y + c);
-  double v = fabs(a * q.x + b * q.y + c);
-  return point((p.x*v + q.x*u)/(u+v), (p.y*v + q.y*u)/(u+v));
-}
-// cuts polygon Q along the line formed by point a-> point b
-// (note: the last point must be the same as the first point)
-vector<point> cutPolygon(point a, point b, vector<point> Q) {
-  vector<point> P;
-  for(int i = 0; i<(int)Q.size(); i++) {
-    double left1 = cross(b - a, (Q[i] - a)), left2 = 0.0;
-    if(i != (int)Q.size()-1) left2 = cross(b - a, Q[i+1] - a);
-    if(left1 > -EPS) P.push_back(Q[i]);
-    if(left1 * left2 < -EPS)
-        P.push_back(lineIntersectSeg(Q[i], Q[i+1], a, b));
-    }
-
-    if(P.empty()) return P;
-    if(fabs(P.back().x - P.front().x) > EPS || fabs(P.back().y - P.front().y) > EPS)
-        P.push_back(P.front());
-    return P;
-}
-
-double dist2(point a, point b) {
-  return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y); // norm_sq(b - a)
-}
-
-point pivot;
-bool angle_cmp(point a, point b) {
-  if(collinear(pivot, a, b))
-    return dist2(a, pivot) < dist2(b, pivot);
-  return ccw(pivot, a, b);
-}
-
-// hasil convexHull tidak siklik
-void convexHull(vector<point> & P) {
-  int i, j, n = (int) P.size();
-  if(n < 3) {
-    return;
-  }
-  int PO = 0;
-  for(i = 1; i < n; i++) {
-    if(P[i] < P[PO]) {
-      PO = i;
-    }
-  }
-  swap(P[0], P[PO]);
-  pivot = P[0];
-  sort(++P.begin(), P.end(), angle_cmp);
-  // if point on boundary is included then uncomment this:
-  // int k = (int)P.size()-1; while (k-1 > 0 && ccw(P[0], P[k-1], P.back()) == 0) k--;
-  // reverse(P.begin() + k, P.end());
-  vector<point> S;
-  S.push_back(P[0]);
-  S.push_back(P[1]);
-  i = 2;
-  while(i < n) {
-    j = (int) S.size() - 1;
-    // if point on boundary is included then ccw >= 0
-    if(j < 1 || ccw(S[j-1], S[j], P[i]) > 0) S.push_back(P[i++]);
-    else S.pop_back();
-  }
-  P = S;
+void testOrthoCenter() {
+  point a, b, c;
+  cin >> a.x >> a.y;
+  cin >> b.x >> b.y;
+  cin >> c.x >> c.y;
+  point p = orthoCenter(a, b, c);
 }
 
 
-//// The Great-Circle Distance (SPHERES)
-double gcDistance(double plat, double plong, double qlat, double, qlong ,double radius) {
-  plat *= PI/180; plong *= PI/180;
-  qlat *= PI/180; qlong *= PI/180;
-  return radius *  acos(cos(plat)*cos(plong)*cos(qlat)*cos(qlong) +
-          cos(plat)*sin(plong)*cos(qlat)*sin(qlong) +
-          sin(plat)*sin(qlat));
+int main() {
+  testInCircle();
+  return 0;
 }
-

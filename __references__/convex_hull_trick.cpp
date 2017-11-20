@@ -12,6 +12,7 @@ struct line {
 
 struct convex_hull_trick {
   line * hull;
+    // if find minimum value then change the comparation
   int size;
   convex_hull_trick(int sz) : size(0) {
     hull = new line[sz+1];
@@ -30,6 +31,7 @@ struct convex_hull_trick {
     l = 0; r = size-1;
     while(l < r) {
       int m = (l + r) >> 1;
+      // this to find biggest
       if(hull[m].get(x) <= hull[m+1].get(x))
         l = m+1;
       else

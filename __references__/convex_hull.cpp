@@ -70,8 +70,7 @@ vector<point> ConvexHull(vector<point> P) {
   return S;
 }
 
-int main(void)
-{
+int main(void) {
   int n;
   scanf("%d", &n);
   vector<point> p;

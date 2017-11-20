@@ -12,7 +12,8 @@ struct flow {
     vector<edge*> *adj;
     edge **parent;
     int *flowto;
-    flow(int n): n(n) {
+    int ans;
+    flow(int n): n(n), ans(0) {
         adj = new vector<edge*>[n];
         for (int i = 0; i < n; i++) {
             adj[i].clear();
