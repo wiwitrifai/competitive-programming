@@ -1,3 +1,4 @@
+// can you hack wifi? :p
 #include <bits/stdc++.h>
 
 using namespace std;
