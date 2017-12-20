@@ -56,26 +56,22 @@ polinom generate(int n) {
 
 int main() {
   srand(time(0));
-  for (int i = 1; i <= 150; ++i) {
-    cerr << i << " start " << endl;
-    while (1) {
-      polinom a, b;
-      a = generate(i);
-      b = generate(i-1);
-      cerr << " sut " << endl;
-      if (get(a, b)) {
-        ans[i] = {a, b};
-        cout << "{{";
-        for (int i = 0; i < a.size(); ++i)
-          cout << a[i] << ",";
-        cout << "},{";
-        for (int i = 0; i < b.size(); ++i)
-          cout << b[i] << ",";
-        cout << "}}," << endl;
-        break;
-      }
-    }
-    cerr << i << " done " << endl;
+  polinom p = {-1,-1,-1,1,0,-1,1,1,-1,1,1,0,-1,0,1,1,-1,1,0,-1,1,1,-1,0,1,1,1,0,1,0,0,-1,0,-1,0,1,-1,-1,1,1,1,-1,-1,0,0,0,-1,-1,1},
+  q = {-1,0,-1,-1,-1,-1,-1,-1,0,1,0,-1,-1,0,1,0,-1,1,1,1,1,-1,0,0,-1,0,1,0,1,1,0,-1,-1,0,1,-1,0,1,1,0,-1,-1,0,1,-1,-1,1,1};
+  cerr << get(p, q) << endl;
+
+  int n;
+  scanf("%d", &n);
+  while (1) {
+    polinom a = generate(n), b = generate(n-1);
+    if (!get(a, b)) continue;
+    printf("%d\n", n);
+    for (int i = 0; i <= n; ++i)
+      printf("%d%c", (int)a[i], (i == n) ? '\n' : ' ');
+    printf("%d\n", n-1);
+    for (int i = 0; i <= n-1; ++i)
+      printf("%d%c", (int)b[i], (i == n-1) ? '\n' : ' ');
+    break;
   }
   return 0;
 }
