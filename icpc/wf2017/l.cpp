@@ -1,169 +1,111 @@
 #include <bits/stdc++.h>
 
 using namespace std;
+const int N = 3e5 + 5, inf = 1e9 + 7;
 
-const int N = 1e5 + 5;
-
-struct segtree {
-  segtree(int n) : n(n) {
-    num.assign(n << 2, -1);
-  }
-  void upd(int at, int val) {
-    upd(1, 0, n - 1, at, val);
-  }
-  void upd(int p, int l, int r, int at, int val) {
-    if (l == r) {
-      num[p] = val;
-      return;
-    }
-    int mid = (l + r) >> 1;
-    if (at <= mid) {
-      upd(p + p, l, mid, at, val);
-    } else {
-      upd(p + p + 1, mid + 1, r, at, val);
-    }
-    num[p] = max(num[p + p], num[p + p + 1]);
-  }
-  int find(int l, int r) {
-    return find(1, 0, n - 1, l, r);
-  }
-  int find(int p, int l, int r, int ll, int rr) {
-    if (ll <= l && r <= rr) return num[p];
-    if (rr < l || r < ll) return -1;
-    int mid = (l + r) >> 1;
-    return max(find(p + p, l, mid, ll, rr), find(p + p + 1, mid + 1, r, ll, rr));
-  }
-  int n;
-  vector<int> num, add;
-};
-
-int ans[N], ox[N], oy[N], cx[N], cy[N];
-
-vector<int> px, py;
-
-vector<pair<int, int>> add[2 * N], del[2 * N];
-
-int idx(int u) {
-  return lower_bound(px.begin(), px.end(), u) - px.begin();
-}
-
-int idy(int u) {
-  return lower_bound(py.begin(), py.end(), u) - py.begin();
-}
-
-int rev(int u) {
-  return (int) py.size() - u - 1;
-}
+pair<int, int> open[N], close[N];
+vector<int> add[N], que[N];
+vector<pair<int, int> > addr[N], remr[N];
+int ans[N];
 
 int main() {
   int n;
   scanf("%d", &n);
-  vector<tuple<int, int, int>> a, b;
-  for (int i = 0; i < n; i++) {
-    int u, v;
-    scanf("%d %d", &u, &v);
-    a.emplace_back(u, v, i);
-    px.push_back(u);
-    py.push_back(v);
-    ox[i] = u;
-    oy[i] = v;
+  vector<int> vr, vc;
+  for (int i = 0; i < n; ++i) {
+    int r, c;
+    scanf("%d %d", &r, &c);
+    open[i] = {r, c};
+    vr.push_back(r);
+    vc.push_back(c);
   }
-  for (int i = 0; i < n; i++) {
-    int u, v;
-    scanf("%d %d", &u, &v);
-    b.emplace_back(u, v, i);
-    px.push_back(u);
-    py.push_back(v);
-    cx[i] = u;
-    cy[i] = v;
+  for (int i = 0; i < n; ++i) {
+    int r, c;
+    scanf("%d %d", &r, &c);
+    close[i] = {r, c};
+    vr.push_back(r);
+    vc.push_back(c);
   }
-  sort(a.begin(), a.end());
-  sort(b.begin(), b.end());
-  set<pair<int, int>> s, same;    // y id
-  int j = n - 1, last = get<0>(a[n-1]);
-  for (int i = n - 1; i >= 0; i--) {
-    while (last < get<0>(a[i]) && !same.empty()) {
-      auto it = same.begin();
-      s.insert(*it);
-      same.erase(it);
+  sort(vr.begin(), vr.end());
+  sort(vc.begin(), vc.end());
+  vr.erase(unique(vr.begin(), vr.end()), vr.end());
+  vc.erase(unique(vc.begin(), vc.end()), vc.end());
+  for (int i = 0; i < n; ++i) {
+    open[i].first = lower_bound(vr.begin(), vr.end(), open[i].first) - vr.begin();
+    open[i].second = lower_bound(vc.begin(), vc.end(), open[i].second) - vc.begin();
+    close[i].first = lower_bound(vr.begin(), vr.end(), close[i].first) - vr.begin();
+    close[i].second = lower_bound(vc.begin(), vc.end(), close[i].second) - vc.begin();
+    add[open[i].second].push_back(i);
+    que[close[i].second].push_back(i);
+  }
+  set<pair<int, int> > st;
+  bool ok = 1;
+  int now = 0; 
+  for (int e = 0; ok && e < vc.size(); ++e) {
+    for (int i : add[e]) {
+      auto it = st.lower_bound(make_pair(open[i].first+1, -1));
+      if (it != st.begin()) {
+        it--;
+        if (it->first == open[i].first)
+          ok = 0;
+      }
+      st.insert(make_pair(open[i].first, i));
     }
-    while (j >= 0 && get<0>(b[j]) > get<0>(a[i])) {
-      int x, y, z;
-      tie(x, y, z) = b[j];
-      s.insert(make_pair(y, z));
-      j--;
-    }
-    while (j >= 0 && get<0>(b[j]) == get<0>(a[i])) {
-      int x, y, z;
-      tie(x, y, z) = b[j];
-      same.insert(make_pair(y, z));
-      j--;
-    }
-    auto it = s.lower_bound(make_pair(get<1>(a[i])+1, -1)), it2 = same.lower_bound(make_pair(get<1>(a[i]), -1));
-    if (it == s.end() && it2 == same.end()) {
-      puts("syntax error");
-      return 0;
-    }
-    else if (it == s.end()) {
-      ans[get<2>(a[i])] = it2->second;
-      same.erase(it2);
-    }
-    else if (it2 == same.end()) {
-      ans[get<2>(a[i])] = it->second;
-      s.erase(it);
-    }
-    else {
-      if (*it < *it2) {
-        ans[get<2>(a[i])] = it->second;
-        s.erase(it);
+    for (int i : que[e]) {
+      auto it = st.lower_bound(make_pair(close[i].first+1, -1));
+      if (it == st.begin()) {
+        ok = 0;
       }
       else {
-        ans[get<2>(a[i])] = it2->second;
-        same.erase(it2);
+        it--;
+        int rem = it->second;
+        st.erase(it);
+        ans[rem] = i;
       }
     }
-    last = get<0>(a[i]);
   }
-  sort(px.begin(), px.end());
-  sort(py.begin(), py.end());
-  px.resize(distance(px.begin(), unique(px.begin(), px.end())));
-  py.resize(distance(py.begin(), unique(py.begin(), py.end())));
-  
-  for (int i = 0; i < n; i++) {
-    int oox = idx(ox[i]);
-    int ooy = idy(oy[i]);
-    int ccx = idx(cx[ans[i]]);
-    int ccy = idy(cy[ans[i]]);
-    add[oox].emplace_back(ooy, ccy);
-    del[ccx].emplace_back(ooy, ccy);
-  }
-  segtree seg(py.size());
-  for (int i = 0; i < px.size(); i++) {
-    for (auto it : add[i]) {
-      if (seg.find(it.first, it.second) >= it.second) {
-        puts("syntax error");
-        return 0;
+  if (ok) {
+    for (int i = 0; i < vc.size(); ++i)
+      add[i].clear(), que[i].clear();
+    for (int i = 0; i < n; ++i) {
+      pair<int, int> range = {open[i].first, close[ans[i]].first};
+      addr[open[i].second].push_back(range);
+      remr[close[ans[i]].second].push_back(range);
+    }
+    set<int> isi;
+    for (int e = 0; ok && e < vc.size(); ++e) {
+      sort(addr[e].begin(), addr[e].end());
+      reverse(addr[e].begin(), addr[e].end());
+      sort(remr[e].begin(), remr[e].end());
+      for (auto r : addr[e]) {
+        auto it = isi.lower_bound(r.first);
+        ok &= (it == isi.end() || *it > r.second);
+        isi.insert(r.first);
+        isi.insert(r.second);
       }
-      seg.upd(it.first, it.second);
-    }
-    for (auto it : del[i]) {
-      seg.upd(it.first, -1);
-    }
-  }
-  seg = segtree(py.size());
-  for (int i = 0; i < px.size(); i++) {
-    for (auto it : add[i]) {
-      if (seg.find(rev(it.second), rev(it.first)) >= rev(it.first)) {
-        puts("syntax error");
-        return 0;
+      for (auto r : remr[e]) {
+        auto it = isi.lower_bound(r.first);
+        if (it == isi.end())
+          ok = 0;
+        else {
+          it = isi.erase(it);
+        }
+        if (r.second == r.first) continue;
+        if (it == isi.end())
+          ok = 0;
+        else if (*it != r.second)
+          ok = 0;
+        else
+          isi.erase(it);
       }
-      seg.upd(rev(it.second), rev(it.first));
-    }
-    for (auto it : del[i]) {
-      seg.upd(rev(it.second), -1);
     }
   }
-  
-  for (int i = 0; i < n; i++) printf("%d\n", ans[i] + 1);
+  if (!ok)
+    puts("syntax error");
+  else {
+    for (int i = 0; i < n; ++i)
+      printf("%d\n", ans[i]+1);
+  }
+
   return 0;
 }
