@@ -3,11 +3,11 @@ struct Line {
     ll m, b;
     mutable function<const Line*()> succ;
     bool operator<(const Line& rhs) const {
-        if (rhs.b != is_query) return m < rhs.m;
+        if (rhs.b != is_query) return m < rhs.m; // min: reverse it
         const Line* s = succ();
         if (!s) return 0;
         ll x = rhs.m;
-        return b - s->b < (s->m - m) * x;
+        return b - s->b < (s->m - m) * x; // min: reverse it
     }
 };
 struct HullDynamic : public multiset<Line> { // will maintain upper hull for maximum
@@ -15,11 +15,11 @@ struct HullDynamic : public multiset<Line> { // will maintain upper hull for max
         auto z = next(y);
         if (y == begin()) {
             if (z == end()) return 0;
-            return y->m == z->m && y->b <= z->b;
+            return y->m == z->m && y->b <= z->b; // min: reverse it
         }
         auto x = prev(y);
-        if (z == end()) return y->m == x->m && y->b <= x->b;
-        return (x->b - y->b)*(z->m - y->m) >= (y->b - z->b)*(y->m - x->m);
+        if (z == end()) return y->m == x->m && y->b <= x->b; // min: reverse it
+        return (x->b - y->b)*(z->m - y->m) >= (y->b - z->b)*(y->m - x->m); // beware overflow!
     }
     void insert_line(ll m, ll b) {
         auto y = insert({ m, b });
