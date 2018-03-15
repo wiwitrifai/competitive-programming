@@ -4,26 +4,26 @@ using namespace std;
 
 typedef long double LD;
 const LD EPS = 1e-9, PI = acos(-1);
-inline bool equal(LD a, LD b) { return fabs(a-b) < EPS; }
-inline bool less(LD a, LD b) { return a + EPS < b; }
-inline bool eqless(LD a, LD b) { return a < b + EPS; }
-inline int sign(LD x) { return equal(x, 0) ? 0 : (x < 0 ? -1 : 1); }
+inline bool eq(LD a, LD b) { return fabs(a-b) < EPS; }
+inline bool lt(LD a, LD b) { return a + EPS < b; }
+inline bool le(LD a, LD b) { return a < b + EPS; }
+inline int sign(LD x) { return eq(x, 0) ? 0 : (x < 0 ? -1 : 1); }
 
 struct point {
   LD x, y;
   point(LD x = 0, LD y = 0) : x(x), y(y) {}
-  point operator+(point p) { return point(x+p.x, y+p.y); }
-  point operator-(point p) { return point(x-p.x, y-p.y); }
+  point operator+(const point& p) const { return point(x+p.x, y+p.y); }
+  point operator-(const point& p) const { return point(x-p.x, y-p.y); }
   point operator*(LD s) { return point(x*s, y*s); }
   point operator/(LD s) { return point(x/s, y/s); }
-  LD operator*(point p) { return x*p.x + y*p.y; } // dot
-  LD operator%(point p) { return x*p.y - y*p.x; } // cross
+  LD operator*(const point& p) const { return x*p.x + y*p.y; } // dot
+  LD operator%(const point& p) const { return x*p.y - y*p.x; } // cross
   LD norm_sq() { return *this * *this; }
   LD norm() { return sqrt(*this * *this); }
   point rotate(LD cs, LD sn) { return point(x*cs-y*sn, x*sn+y*cs); }
   point rotate(LD angle) { return rotate(cos(angle), sin(angle)); }
-  bool operator==(point p) { return equal(x, p.x) && equal(y, p.y); }
-  bool operator<(point p) { return equal(y, p.y) ? x < p.x : y < p.y; }
+  bool operator==(const point& p) const { return eq(x, p.x) && eq(y, p.y); }
+  bool operator<(const point& p) const { return eq(y, p.y) ? x < p.x : y < p.y; }
 };
 int ccw(point a, point b, point c) { return sign((b - a) % (c - b)); }
 LD dist(point a, point b) { return (b-a).norm(); }
@@ -46,7 +46,7 @@ struct line {
   // Line
   bool onLine(point p) {
     if (ab == point()) return a == p;
-    return equal(ab % (p-a), 0);
+    return eq(ab % (p-a), 0);
   }
   LD distLine(point p) {
     if (ab == point()) return dist(a, p);
@@ -63,20 +63,20 @@ struct line {
   bool onSegment(point p) {
     if (ab == point()) return a == p;
     point pa = a-p, pb = b()-p;
-    return equal(pa % pb, 0) && eqless(pa * pb, 0);
+    return eq(pa % pb, 0) && le(pa * pb, 0);
   }
   LD distSegment(point p) {
-    if (eqless((p-a) * ab, 0)) return dist(a, p);
-    if (eqless(0, (p-b()) * ab)) return dist(b(), p);
+    if (le((p-a) * ab, 0)) return dist(a, p);
+    if (le(0, (p-b()) * ab)) return dist(b(), p);
     return distLine(p);
   }
   point closestSegment(point p) {
-    if (eqless((p-a) * ab, 0)) return a;
-    if (eqless(0, (p-b()) * ab)) return b();
+    if (le((p-a) * ab, 0)) return a;
+    if (le(0, (p-b()) * ab)) return b();
     return projection(p);
   }
   bool areParallel(line l) {
-    return equal(ab % l.ab, 0);
+    return eq(ab % l.ab, 0);
   }
   bool areSame(line l) {
     return areParallel(l) && onLine(l.a) && l.onLine(a);
@@ -175,20 +175,20 @@ vector<pair<point, point> > tangent2Circle(point o1, double r1, point o2, double
 LD cross(point a, point b) { return a % b; }
 double area(const vector< point > & P) {
   double result = 0.0;
-  for(int i = 0; i< (int)P.size()-1; i++) {
-    result += (P[i].x * P[i+1].y - P[i].y*P[i+1].x); // cross(P[i], P[i+1]);
+  for(int i = 0; i+1 < (int)P.size(); ++i) {
+    result += P[i] % P[i+1]; // cross(P[i], P[i+1]);
   }
   return fabs(result)/2.0;
 }
 
 // check if point p inside (CONVEX/CONCAVE) polygon vp
-int inPolygon(point p, const vector< point >& vp) {
+// 0 on boundary, -1 inside, 1 outside
+int pointVsPolygon(point p, const vector< point >& vp) {
   int wn = 0, n = (int)vp.size() - 1;
-  for(int i = 0; i<n; i++) {
+  for(int i = 0; i < n; i++) {
     int cs = ccw(vp[i+1], vp[i], p);
-    if(cs == 0 && p.x <= max(vp[i].x, vp[i+1].x) && p.x >= min(vp[i].x, vp[i+1].x)
-      && p.y <= max(vp[i].y, vp[i+1].y) && p.y >= min(vp[i].y, vp[i+1].y))
-      return 1; // between(vp[i], p, vp[i+1])
+    if(cs == 0 && (vp[i+1]-p) * (vp[i]-p) <= 0)
+      return 0; // between(vp[i], p, vp[i+1])
     if(vp[i].y <= p.y) {
       if(vp[i+1].y > p.y && cs > 0)
         wn++;
@@ -198,7 +198,7 @@ int inPolygon(point p, const vector< point >& vp) {
         wn--;
     }
   }
-  return wn;
+  return wn == 0 ? 1 : -1;
 }
 
 // line segment p-q intersect with line A-B
@@ -215,15 +215,15 @@ point lineIntersectSeg(point p, point q, point A, point B) {
 vector<point> cutPolygon(point a, point b, vector<point> Q) {
   vector<point> P;
   for(int i = 0; i<(int)Q.size(); i++) {
-    double left1 = cross(b - a, (Q[i] - a)), left2 = 0.0;
-    if(i != (int)Q.size()-1) left2 = cross(b - a, Q[i+1] - a);
+    double left1 = (b - a) % (Q[i] - a), left2 = 0.0;
+    if(i != (int)Q.size()-1) left2 = (b - a) % (Q[i+1] - a);
     if(left1 > -EPS) P.push_back(Q[i]);
     if(left1 * left2 < -EPS)
         P.push_back(lineIntersectSeg(Q[i], Q[i+1], a, b));
     }
 
     if(P.empty()) return P;
-    if(fabs(P.back().x - P.front().x) > EPS || fabs(P.back().y - P.front().y) > EPS)
+    if(!(P.front() == P.back()))
         P.push_back(P.front());
     return P;
 }
