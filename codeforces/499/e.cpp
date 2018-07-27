@@ -13,7 +13,7 @@ void upd(int x, int v) {
 }
 
 int get(int x) {
-  int r = 1e9;
+  int r = inf;
   for (; x; x -= x&-x)
     r = min(r, bit[x]);
   return r;
@@ -38,18 +38,24 @@ int main() {
     int y[3];
     bool found = 1;
     int mark = 0;
+    int insmask = 0;
     for (int j = 0; j < 3; ++j) {
       scanf("%d", y+j);
-      bool inside = y[j] >= xa[j] && y[j] <= xb[j];
+      int inside = y[j] >= xa[j] && y[j] <= xb[j];
       found &= inside;
+      insmask |= inside << j;
       if (inside)
         y[j] = xb[j];
-      if (y[j] >= xb[j])
-        mark |= 1 << j;
-      else
-        y[j] = -y[j];
+      mark |= (y[j] > xb[j]) << j;
     }
-    ev[mark].emplace_back(y[0], y[1], y[2], -1);
+    for (int j = insmask; ; j = (j-1) & insmask) {
+      int x[3];
+      for (int z = 0; z < 3; ++z) {
+        x[z] = ((mark | j) & (1 << z)) ? y[z] : -y[z];
+      }
+      ev[mark | j].emplace_back(x[0], x[1], x[2], -1);
+      if (j == 0) break;
+    }
     if (found)
       ok = 0;
   }
@@ -63,22 +69,28 @@ int main() {
     int y[3];
     bool found = 1;
     int mark = 0;
+    int insmask = 0;
     for (int j = 0; j < 3; ++j) {
       scanf("%d", y+j);
-      bool inside = y[j] >= xa[j] && y[j] <= xb[j];
+      int inside = y[j] >= xa[j] && y[j] <= xb[j];
       found &= inside;
+      insmask |= inside << j;
       if (inside)
         y[j] = xb[j];
-      if (y[j] >= xb[j])
-        mark |= 1 << j;
-      else
-        y[j] = -y[j];
+      mark |= (y[j] > xb[j]) << j;
     }
     if (found)
       ans[i] = 1;
     else {
       ans[i] = 0;
-      ev[mark].emplace_back(y[0], y[1], y[2], i);
+      for (int j = insmask; ; j = (j-1) & insmask) {
+        int x[3];
+        for (int z = 0; z < 3; ++z) {
+          x[z] = ((mark | j) & (1 << z)) ? y[z] : -y[z];
+        }
+        ev[mark | j].emplace_back(x[0], x[1], x[2], i);
+        if (j == 0) break;
+      }
     }
   }
   for (int mask = 0; mask < 8; ++mask) {
