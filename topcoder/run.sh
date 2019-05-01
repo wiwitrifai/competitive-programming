@@ -5,7 +5,7 @@ extension="${fullname##*.}"
 filename="${fullname%.*}"
 echo "$filename" "$extension"
 if [ "$extension" = "cpp" ]; then
-  g++ "$fullname" -o e
+  g++ "$fullname" -o e -Wall -O2
   if [ $? -eq 0 ]; then
    echo "compiled"
    ./e
