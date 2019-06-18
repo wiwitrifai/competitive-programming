@@ -2,17 +2,27 @@
 
 using namespace std;
 
-void solve(int tc) {
-  printf("Case #%d:\n", tc);
+void read_input() {
+}
+
+void solve() {
+  puts("Hello world");
 }
 
 int main() {
-  time_t startt = clock();
+#ifdef LOCAL
+  time_t starttime = clock();
+#endif
   int tt;
   scanf("%d", &tt);
   for (int tc = 1; tc <= tt; tc++) {
-    solve(tc);
-    cerr << "~ #" << tc << " done! time : " << (double)(clock()-startt)/CLOCKS_PER_SEC << " s" << endl;
+    printf("Case #%d: ", tc);
+    read_input();
+    solve();
+#ifdef LOCAL
+    cerr << "~ TC#" << tc << " done! execution time: " <<
+      (double)(clock()-starttime) / CLOCKS_PER_SEC << " s" << endl;
+#endif
   }
   return 0;
 }

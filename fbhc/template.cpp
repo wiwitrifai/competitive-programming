@@ -2,20 +2,31 @@
 
 using namespace std;
 
-void solve(int tc) {
-  printf("Case #%d: ", tc);
-  int ans = 0;
-  printf("%d\n", ans);
+void read_input() {
 }
 
-int main() {
-  clock_t startt = clock();
+void solve() {
+  puts("Hello world");
+}
+
+int main(int argc, char * argv[]) {
+  clock_t starttime = clock();
+  int seed = time(0);
+  if (argc >= 2) {
+    seed = atoi(argv[1]);
+  }
+  cerr << "random seed\t= " << seed << endl;
+  srand(seed);
+
   int tt;
   scanf("%d", &tt);
   for (int tc = 1; tc <= tt; ++tc) {
-    solve(tc);
+    printf("Case #%d: ", tc);
+    read_input();
+    solve();
     fflush(stdout);
-    cerr << " TC# " << tc << " done ! time : " << (double)(clock() - startt) / CLOCKS_PER_SEC << " s " << endl;
+    cerr << "~ TC#" << tc << " done! execution time : " <<
+      (double)(clock() - starttime) / CLOCKS_PER_SEC << " s " << endl;
   }
   return 0;
 }
