@@ -3,7 +3,7 @@
 using namespace std;
 
 #define INF 1000000000
-#define MAXN 500
+#define MAXN 5050
 
 struct Edge
 {

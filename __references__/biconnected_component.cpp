@@ -2,8 +2,7 @@
 
 using namespace std;
 
-struct Biconnected
-{
+struct Biconnected {
   // input variable
   int n;
   vector<vector< int > > adj;

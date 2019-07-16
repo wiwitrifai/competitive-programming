@@ -2,8 +2,7 @@
 
 using namespace std;
 
-struct Tree
-{
+struct Tree {
   int n, LN;
   vector<vector< int > > adj;
   vector<int> lv;

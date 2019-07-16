@@ -40,6 +40,8 @@ struct convex_hull_trick {
     return hull[l].get(x);
   }
 };
+
+
 const int N = 2e5 + 5;
 long long sum[N];
 int a[N];

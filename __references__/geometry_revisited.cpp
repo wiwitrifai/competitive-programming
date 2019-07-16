@@ -25,6 +25,9 @@ struct point {
   bool operator==(const point& p) const { return eq(x, p.x) && eq(y, p.y); }
   bool operator<(const point& p) const { return eq(y, p.y) ? x < p.x : y < p.y; }
 };
+ostream& operator<<(ostream& os, point p) {
+  return os << "(" << p.x << ", " << p.y << ")";
+}
 int ccw(point a, point b, point c) { return sign((b - a) % (c - b)); }
 LD dist(point a, point b) { return (b-a).norm(); }
 LD dist2(point a, point b) { return (b-a).norm_sq(); }
@@ -183,18 +186,19 @@ double area(const vector< point > & P) {
 
 // check if point p inside (CONVEX/CONCAVE) polygon vp
 // 0 on boundary, -1 inside, 1 outside
-int pointVsPolygon(point p, const vector< point >& vp) {
-  int wn = 0, n = (int)vp.size() - 1;
+int pointVsPolygon(point & p, vector< point >& vp) {
+  int wn = 0, n = (int)vp.size();
+  auto next = [n](int id) { return id == n-1 ? 0 : id+1; };
   for(int i = 0; i < n; i++) {
-    int cs = ccw(vp[i+1], vp[i], p);
-    if(cs == 0 && (vp[i+1]-p) * (vp[i]-p) <= 0)
+    int cs = ccw(vp[next(i)], vp[i], p);
+    if(cs == 0 && (vp[next(i)]-p) * (vp[i]-p) <= 0)
       return 0; // between(vp[i], p, vp[i+1])
     if(vp[i].y <= p.y) {
-      if(vp[i+1].y > p.y && cs > 0)
+      if(vp[next(i)].y > p.y && cs > 0)
         wn++;
     }
     else {
-      if(vp[i+1].y <= p.y && cs < 0)
+      if(vp[next(i)].y <= p.y && cs < 0)
         wn--;
     }
   }
