@@ -1,0 +1,41 @@
+C:
+- Disana -> Di sana
+- Namun Arvy yang kurang beruntung pada hari itu. -> bukan kalimat -> ilangin "yang"
+- cincin arvy -> cincin Arvy
+- di gambarnya Vt bukan Vk?
+- Kalo bisa pastikan solusinya ga kena precision error, bikin solusi tanpa pake floating-point number (misal pake Fraction)
+
+D:
+- harusnya sama dengan soal E bukan D lagi
+- ga ada mod = 1e9 + 7
+- samplenya harusnya, T = 3 tapi di situ cuma T = 2
+
+E:
+- harusnya sama dengan soal D bukan E lagi
+- ga ada mod = 1e9 + 7
+
+H:
+- typo Sebenearnya -> Sebenarnya
+
+J:
+- Nomer persimpangan ga ada digambar, kalo bisa nomor persimpangan jangan cuma nomer misal bisa pake penomeran S1, S2, dst, soalnya rancu dengan nomor jalur, gambarnya cuma ada nomer jalur tapi yang disebut di penjelasan cuma nomer persimpangan yang bahkan ga ada di gambar.
+- Perlu ditulis yang sudah dijamin: connected, input memberikan graf planar yang valid.
+- Batasan nomor jalur a, b, c belum ada, kalo ga ada bisa aja nomor jalurnya loncat2.
+- Contoh Keluaran salah, seharusnya 5.
+- Aku liat solution.cpp itu asumsinya jalur awalnya itu selalu terurut berdasarkan penomeran dari atas ke bawah. Kode yang ini:
+
+  vi listAwal;
+  for(int i=1;i<=m;i++){
+    if(indeg[i] == 0){
+      listAwal.push_back(i);
+      q.push(i);
+    }
+  }
+
+Tapi di soal ga dibilang apa2 kan? Kalo menurutku sih emang mending udah dikasih aja urutan jalur awalnya, biar soalnya ga terlalu susah di ngurutin penomeran awalnya, tapi nulis konstrain di inputnya kan jadi susah, alternatifnya biar lebih gampang sih jalur awalnya dikasih 1 aja, atau jalur akhirnya yang 1 juga bisa.
+
+K:
+- Format Masukan kayaknya mending jangan bilang "Untuk tiap kasus uji, akan terdapat M + 1 baris.", karena M belum didefinisikan dan M untuk tiap kasus uji beda-beda.
+
+- Penulisan Contoh Masukan membingungkan karena kepotong jadi 3 bagian. Kalo bisa biar rapi sih formatinya kayak ICPC Jkt, bentuknya tabel, kiri input, kanan output. 
+- Gambar ilustrasi kasus uji 2 ga sesuai. Kalo cuma random rubik buat ngeliatin awal dan akhirnya doang yang sama mending ga usah dikasih gambar.
