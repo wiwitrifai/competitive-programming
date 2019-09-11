@@ -5,6 +5,6 @@ for txt in `ls *.txt`; do
     rm $txt
     source_code="${txt%.*}.cpp"
     echo "  $source_code -> archive"
-    mv $source_code 'arcive'
+    mv $source_code 'archive'
 done
 echo "All done!"
