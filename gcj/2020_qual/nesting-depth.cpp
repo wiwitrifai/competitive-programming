@@ -3,7 +3,25 @@
 using namespace std;
 
 void solve() {
-  puts("Hello world");
+  string s;
+  cin >> s;
+  int depth = 0;
+  string ans;
+  for (char c : s) {
+    c -= '0';
+    if (c > depth) {
+      ans += string(c-depth, '(');
+      depth = c;
+    }
+    else if (c < depth) {
+      ans += string(depth-c, ')');
+      depth = c;
+    }
+    ans.push_back(c+'0');
+  }
+  if (depth > 0)
+    ans += string(depth, ')');
+  cout << ans << "\n";
 }
 
 int main() {
