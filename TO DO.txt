@@ -1,7 +1,0 @@
-TO DO LIST (Competitive Programming):
-
-1. Fix and test references for AingeCP's cheetsheat
-2. Learn KD-Tree, Range Tree, etc.
-3. Investigate again about MCMF, djikstra and negative weight ?
-4. Andrew Monotone Chain Convex Hull
-5. TREAP
